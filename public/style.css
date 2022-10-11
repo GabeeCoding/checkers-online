@@ -17,9 +17,19 @@ body {
     align-items: center;
     flex-direction: column;
 }
-body * {
-    margin-bottom: 30vh;
+
+button {
+    border-radius: 5px;
+    width: 20vw;
+    height: 11vh;
 }
+
+.centeritems {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
 #box {
-    background-color: aqua;
+    background-color: rgb(237, 237, 237);
 }
