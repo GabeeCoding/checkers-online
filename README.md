@@ -1,2 +1,1 @@
-# checkers-online
-Checkers online
+# Checkers Online
