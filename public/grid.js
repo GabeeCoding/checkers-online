@@ -56,9 +56,27 @@ const coords = (nx, ny) => {
 	return {x: centerBoxLength+(n*nx), y: centerBoxLength+(n*nx)}
 }
 
+const clear = () => {
+	context.clearRect(0,0,1000,1000)
+}
+
+//
+
 drawBoard();
 {
 	let {x,y} = coords(1,1)
 	let diameter = n - 10
 	drawCircle(x, y, diameter/2, "rgb(255, 30, 0)", "rgb(161, 19, 0)", 5)
 }
+
+let canvasElem = document.querySelector("canvas");
+
+canvasElem.addEventListener("mousedown", (e) => {
+	let rect = canvas.getBoundingClientRect();
+	let x = e.clientX - rect.left;
+	let y = e.clientY - rect.top;
+	console.log(x,y)
+	for (let i = 1; i < 9; i++) {
+		let {startCoords, _} = coords(i, 0)
+	}
+})
