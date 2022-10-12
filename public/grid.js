@@ -60,13 +60,27 @@ const clear = () => {
 	context.clearRect(0,0,1000,1000)
 }
 
+const createChecker = (team, xc, yc) => {
+	let {x,y} = coords(xc,yc)
+	let diameter = n - 10
+	let fill, stroke
+	if(team === "red"){
+		fill = "rgb(255, 30, 0)"
+		stroke = "rgb(161, 19, 0)"
+	} else {
+		if(team === "blue"){
+			fill = "rgb(20, 74, 252)"
+			stroke = "rgb(14, 50, 165)"
+		}
+	}
+	drawCircle(x, y, diameter/2, fill, stroke, 5)
+}
+
 //
 
 drawBoard();
 {
-	let {x,y} = coords(1,1)
-	let diameter = n - 10
-	drawCircle(x, y, diameter/2, "rgb(255, 30, 0)", "rgb(161, 19, 0)", 5)
+	createChecker("blue", 1, 2)
 }
 
 let canvasElem = document.querySelector("canvas");
