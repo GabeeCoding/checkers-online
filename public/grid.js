@@ -53,7 +53,7 @@ const coords = (nx, ny) => {
 	//We do centerBoxLength*
 	nx -= 1
 	ny -= 1
-	return {x: centerBoxLength+(n*nx), y: centerBoxLength+(n*nx)}
+	return {x: centerBoxLength+(n*nx), y: centerBoxLength+(n*ny)}
 }
 
 const clear = () => {
@@ -75,8 +75,26 @@ canvasElem.addEventListener("mousedown", (e) => {
 	let rect = canvas.getBoundingClientRect();
 	let x = e.clientX - rect.left;
 	let y = e.clientY - rect.top;
-	console.log(x,y)
+	let boxCoords = {
+		x: null,
+		y: null
+	}
 	for (let i = 1; i < 9; i++) {
-		let {startCoords, _} = coords(i, 0)
+		let startCoords = coords(i, 0).x + centerBoxLength
+		let prevCoords = coords(i - 1, 0).x + centerBoxLength
+		if(x > prevCoords){
+			if(x < startCoords){
+				boxCoords.x = i
+			}
+		}
+	}
+	for (let i = 1; i < 9; i++) {
+		let startCoords = coords(0, i).y + centerBoxLength
+		let prevCoords = coords(0, i - 1).y + centerBoxLength
+		if(y > prevCoords){
+			if(y < startCoords){
+				boxCoords.y = i
+			}
+		}
 	}
 })
