@@ -34,12 +34,29 @@ type Board = Box[]
 const games: Game[] = []
 const Players: Player[] = []
 
+function createBoard(){
+	let board: Board = []
+	for (let x = 1; x < 9; x++) {
+		//runs 8 times
+		//another for loop for the y axis
+		for(let y = 1; y < 9; y++){
+			board.push({
+				x: x,
+				y: y,
+				checker: null
+			})
+		}
+	}
+	//add the checkers
+	return board
+}
+
 function createGame(player1: Player, player2: Player): Game {
 	games.push({
 		blue: player1,
 		red: player2,
 		gameId: lastGameId + 1,
-		board: []
+		board: createBoard()
 	});
 	lastGameId += 1
 	return games[games.length - 1]
