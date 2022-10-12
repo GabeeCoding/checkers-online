@@ -4,7 +4,8 @@
   },
   "main": "app.js",
   "devDependencies": {
-    "@types/express": "^4.17.14"
+    "@types/express": "^4.17.14",
+    "@types/node": "^18.8.4"
   },
   "name": "checkers-online",
   "description": "Checkers online",
