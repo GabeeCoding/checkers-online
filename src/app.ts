@@ -14,7 +14,7 @@ type Player = {
 type Game = {
     player1: Player,
 	player2: Player
-	id: number
+	gameId: number
 }
 
 const games: Game[] = []
@@ -24,7 +24,7 @@ function createGame(player1: Player, player2: Player): Game {
 	games.push({
 		player1: player1,
 		player2: player2,
-		id: lastGameId + 1
+		gameId: lastGameId + 1
 	});
 	lastGameId += 1
 	return games[games.length - 1]
