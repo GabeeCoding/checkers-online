@@ -12,19 +12,34 @@ type Player = {
 }
 
 type Game = {
-    player1: Player,
-	player2: Player
-	gameId: number
+    blue: Player,
+	red: Player
+	gameId: number,
+	board: Board
 }
+
+type Checker = {
+	Team: string,
+	King: boolean
+}
+
+type Box = {
+	x: number,
+	y: number,
+	checker: Checker | null
+}
+
+type Board = Box[]
 
 const games: Game[] = []
 const Players: Player[] = []
 
 function createGame(player1: Player, player2: Player): Game {
 	games.push({
-		player1: player1,
-		player2: player2,
-		gameId: lastGameId + 1
+		blue: player1,
+		red: player2,
+		gameId: lastGameId + 1,
+		board: []
 	});
 	lastGameId += 1
 	return games[games.length - 1]
