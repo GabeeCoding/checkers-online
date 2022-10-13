@@ -27,6 +27,25 @@ function drawBoard() {
 	context.stroke();
 }
 
+let last = "black"
+const paintBoard = () => {
+	const paintBoxAt = (xc, yc) => {
+		if(last === "white"){
+			last = "black"
+			//last box was white
+			//paint it
+			context.fillRect((n*xc) - 1, (n*yc) -1, n, n)
+		} else {
+			last = "white"
+		}
+	}
+	for(let y = 0; y < 9; y++){
+		for(let x = 0; x < 9; x++){
+			paintBoxAt(x, y)
+		}
+	}
+}
+
 const drawCircle = (x, y, radius, fill, stroke, strokeWidth) => {
 	context.beginPath()
 	context.arc(x, y, radius, 0, Math.PI * 2, false)
@@ -79,6 +98,7 @@ const createChecker = (team, xc, yc) => {
 //
 
 drawBoard();
+paintBoard()
 {
 	createChecker("blue", 1, 2)
 }
