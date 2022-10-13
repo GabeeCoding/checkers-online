@@ -18,8 +18,10 @@ type Game = {
 	board: Board
 }
 
+type Team = "blue" | "red"
+
 type Checker = {
-	Team: string,
+	Team: Team,
 	King: boolean
 }
 
@@ -56,16 +58,46 @@ function checkForBlackBox(x: number, y: number){
 	}
 }
 
+function between(n: number, start: number, end: number): boolean {
+	if(n >= start){
+		if(n <= end){
+			return true
+		}
+	}
+	return false
+}
+
 function createBoard(){
 	let board: Board = []
 	for (let x = 1; x < 9; x++) {
 		//runs 8 times
 		//another for loop for the y axis
 		for(let y = 1; y < 9; y++){
+			let checker: Checker
+			if(between(y, 1, 3)){
+				//if y is between 1 and 3
+				//place blue checkers
+				if(checkForBlackBox(x, y)){
+					//place blue checker
+					checker = {
+						Team: "blue",
+						King: false
+					}
+				}
+			}
+			if(between(y, 6, 8)){
+				if(checkForBlackBox(x,y)){
+					//place red checker
+					checker = {
+						Team: "red",
+						King: false,
+					}
+				}
+			}
 			board.push({
 				x: x,
 				y: y,
-				checker: null
+				checker: checker! || null
 			})
 		}
 	}
