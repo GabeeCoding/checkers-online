@@ -34,6 +34,28 @@ type Board = Box[]
 const games: Game[] = []
 const Players: Player[] = []
 
+function isEven(n: number): boolean {
+	return n % 2 == 0
+}
+
+function checkForBlackBox(x: number, y: number){
+	let xEven = isEven(x);
+	let yEven = isEven(y)
+	if(xEven) {
+		if(yEven){
+			return false
+		} else {
+			return true
+		}
+	} else {
+		if(yEven) {
+			return true
+		} else {
+			return false
+		}
+	}
+}
+
 function createBoard(){
 	let board: Board = []
 	for (let x = 1; x < 9; x++) {
@@ -47,6 +69,7 @@ function createBoard(){
 			})
 		}
 	}
+
 	//add the checkers
 	return board
 }
