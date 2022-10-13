@@ -41,6 +41,10 @@ type Board = Box[]
 const games: Game[] = []
 const Players: Player[] = []
 
+function getCheckerAtCoords(game: Game, x: number, y: number): Box | undefined {
+	return game.board.find((box) => box.x === x && box.y === y)
+}
+
 function isEven(n: number): boolean {
 	return n % 2 === 0
 }
@@ -193,7 +197,30 @@ app.get("/getPlayer", (req, resp) => {
 });
 
 app.patch("/move", (req, resp) => {
-
+	if(req.headers["content-type"] !== "application/json"){
+		resp.status(400).json({message: `Invalid content-type, expected application/json, got ${req.headers["content-type"]}`}).end()
+		return
+	}
+	let atx = req.body.atx
+	let aty = req.body.aty
+	atx = parseInt(atx)
+	aty = parseInt(aty)
+	let tox = req.body.tox
+	let toy = req.body.toy
+	tox = parseInt(tox)
+	toy = parseInt(toy);
+	let ret: any = false
+	{
+		[atx, aty, tox, toy].forEach(v => {
+			if(isNaN(v)){
+				ret = true
+			}
+		})
+	}
+	if(ret === true){
+		resp.status(400).json({message: "Failed to parse checker position(s)"}).end()
+		return
+	}
 	let k = req.cookies.key
 	if(!k){
 		resp.status(400).json({message: "No key"}).end()
@@ -206,7 +233,37 @@ app.patch("/move", (req, resp) => {
 		return
 	}
 	//found game
+	//move checker
+	let box = getCheckerAtCoords(game, atx, aty)
+	if(!box){
+		resp.status(400).json({message: "Couldn't find box!"}).end();
+		return
+	}
+	if(box.checker === null){
+		resp.status(400).json({message: "No checker to move"}).end();
+		return
+	}
 
+	let boxAtPoint = getCheckerAtCoords(game, tox, toy)
+	if(!boxAtPoint){
+		resp.status(400).json({message: "No box at coords given!"}).end();
+		return
+	}
+	if(boxAtPoint.checker){
+		//you cant do this!!!!
+		resp.status(400).json({message: "Illegal move", userError: true}).end();
+		return
+	}
+	//this would be a good time to check for double moves
+	//and to remove the checker 
+	//maybe bundle that with headers
+	//for now lets get the basics
+	//TODO: check for team when moving for security
+	let checkerClone = box.checker
+	box.checker = null
+	boxAtPoint.checker = checkerClone
+	console.log(game.board)
+	resp.send(200).json({message: "Success"}).end();
 })
 
 app.get("/gameCache", (req, resp) => {
