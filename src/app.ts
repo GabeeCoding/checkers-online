@@ -1,14 +1,19 @@
 import express from "express";
+import cookieParser from "cookie-parser";
+import { randomUUID } from "crypto";
 
 const app = express();
 
 app.use(express.static("public"));
+app.use(cookieParser());
 
 let lastGameId = 0
 
 type Player = {
 	username: string,
 	key: string,
+	inGame: boolean,
+	inQueue: boolean,
 }
 
 type Game = {
@@ -37,7 +42,7 @@ const games: Game[] = []
 const Players: Player[] = []
 
 function isEven(n: number): boolean {
-	return n % 2 == 0
+	return n % 2 === 0
 }
 
 function checkForBlackBox(x: number, y: number){
@@ -113,9 +118,112 @@ function createGame(player1: Player, player2: Player): Game {
 		gameId: lastGameId + 1,
 		board: createBoard()
 	});
+	player1.inGame = true
+	player1.inQueue = false
+	player2.inGame = true
+	player2.inQueue = false
 	lastGameId += 1
 	return games[games.length - 1]
 }
+
+function findGameFromKey(k: string): Game | undefined {
+	return games.find((game) => {
+		if(game.blue.key === k) return true;
+		if(game.red.key === k) return true;
+		return false
+	});
+}
+
+app.get("/newPlayer", (req, resp) => {
+	const name = Array.isArray(req.headers.username) ? req.headers.username[0] : req.headers.username
+	if(!name){
+		resp.status(400).json({message: "Invalid username header"}).end()
+		return
+	}
+	let oldKey = req.cookies.key
+	if(oldKey){
+		//if the old key exists
+		resp.status(400).json({message: "Player already exists"}).end()
+		return
+	}
+	//generate a key
+	//add them to player table
+	let key = randomUUID({disableEntropyCache: true});
+	Players.push({
+		key: key,
+		username: name,
+		inGame: false,
+		inQueue: true
+	})
+	resp.cookie("key", key, {maxAge: 86400000})
+
+	//matchmake player
+	let plr1: Player, plr2: Player
+	Players.forEach((plr) => {
+		if(plr.inQueue && !plr.inGame){
+			//in queue, not in game
+			if(plr1 === undefined){
+				plr1 = plr
+			}
+			if(plr2 === undefined){
+				plr2 = plr
+			}
+		}
+	});
+	if(plr1! !== undefined && plr2! !== undefined) {
+		//if both players exist
+		//make a new game
+		let game = createGame(plr1, plr2)
+	}
+	resp.status(200).json({message: "Successfully created player, added to queue"})
+})
+
+app.get("/getPlayer", (req, resp) => {
+	let k = req.cookies.key
+	if(!k){
+		resp.status(400).json({message: "No key"}).end()
+		return
+	}
+	let plr = Players.find(p => p.key === k)
+	if(!plr){
+		resp.status(400).json({message: "No player with key found!"}).end()
+		return
+	}
+	resp.json(plr).end();
+});
+
+app.patch("/move", (req, resp) => {
+
+	let k = req.cookies.key
+	if(!k){
+		resp.status(400).json({message: "No key"}).end()
+		return
+	}
+	
+	let game = findGameFromKey(k)
+	if(!game){
+		resp.status(400).json({message: "Couldn't find game"}).end();
+		return
+	}
+	//found game
+
+})
+
+app.get("/gameCache", (req, resp) => {
+	let k = req.cookies.key
+	if(!k){
+		resp.status(400).json({message: "No key"}).end()
+		return
+	}
+	
+	let game = findGameFromKey(k)
+	if(!game){
+		resp.status(400).json({message: "Couldn't find game"}).end();
+		return
+	} else {
+		resp.status(200).json(game).end();
+	}
+})
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
