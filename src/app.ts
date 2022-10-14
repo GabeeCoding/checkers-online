@@ -152,6 +152,10 @@ app.get("/newPlayer", (req, resp) => {
 		resp.status(400).json({message: "Player already exists"}).end()
 		return
 	}
+	if(Players.find(plr => plr.username.toLowerCase() === name.toLowerCase())){
+		resp.status(400).json({message: "Username is already taken", userError: true}).end();
+		return
+	}
 	//generate a key
 	//add them to player table
 	let key = randomUUID({disableEntropyCache: true});
@@ -180,8 +184,10 @@ app.get("/newPlayer", (req, resp) => {
 		//if both players exist
 		//make a new game
 		let game = createGame(plr1, plr2)
+		resp.json({ready: true, game: game})
 	}
-	resp.status(200).json({message: "Successfully created player, added to queue"})
+	console.log(games)
+	resp.status(200).json({message: "Successfully created player, added to queue"}).end()
 })
 
 app.get("/getPlayer", (req, resp) => {
