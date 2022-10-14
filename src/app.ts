@@ -184,7 +184,7 @@ app.get("/newPlayer", (req, resp) => {
 		//if both players exist
 		//make a new game
 		let game = createGame(plr1, plr2)
-		resp.json({ready: true, game: game})
+		resp.json({ready: true, game: game, message: "Game is ready"})
 	}
 	console.log(games)
 	resp.status(200).json({message: "Successfully created player, added to queue"}).end()
@@ -274,7 +274,8 @@ app.patch("/move", (req, resp) => {
 	resp.send(200).json({message: "Success"}).end();
 })
 
-app.get("/gameCache", (req, resp) => {
+app.get("/gameReady", (req, resp) => {
+	//client is ready, make 
 	let k = req.cookies.key
 	if(!k){
 		resp.status(400).json({message: "No key"}).end()
@@ -286,7 +287,7 @@ app.get("/gameCache", (req, resp) => {
 		resp.status(400).json({message: "Couldn't find game"}).end();
 		return
 	} else {
-		resp.status(200).json(game).end();
+		resp.status(200).json({game: game, ready: true, message: "Game is ready"}).end();
 	}
 })
 
