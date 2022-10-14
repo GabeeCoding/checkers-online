@@ -25,6 +25,7 @@ function drawBoard() {
 	}
 	context.strokeStyle = "black";
 	context.stroke();
+	paintBoard()
 }
 
 let last = "black"
@@ -98,7 +99,6 @@ const createChecker = (team, xc, yc) => {
 //
 
 drawBoard();
-paintBoard()
 {
 	createChecker("blue", 1, 2)
 }
