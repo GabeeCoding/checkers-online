@@ -20,7 +20,8 @@ type Game = {
     blue: Player,
 	red: Player
 	gameId: number,
-	board: Board
+	board: Board,
+	turn: Team
 }
 
 type Team = "blue" | "red"
@@ -120,7 +121,8 @@ function createGame(player1: Player, player2: Player): Game {
 		blue: player1,
 		red: player2,
 		gameId: lastGameId + 1,
-		board: createBoard()
+		board: createBoard(),
+		turn: "red"
 	});
 	player1.inGame = true
 	player1.inQueue = false
