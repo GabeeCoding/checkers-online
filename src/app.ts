@@ -180,6 +180,8 @@ app.get("/newPlayer", (req, resp) => {
 		//if both players exist
 		//make a new game
 		let game = createGame(plr1, plr2)
+		resp.json({ready: true, game: game}).end();
+		return
 	}
 	resp.status(200).json({message: "Successfully created player, added to queue"})
 })

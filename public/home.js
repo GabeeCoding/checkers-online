@@ -45,6 +45,8 @@ function startGame(){
         }
     }).then((resp) => {
         //check for response success
-        
+        resp.json(json => {
+            console.log(json)
+        })
     })
 }
