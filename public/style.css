@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap');
 * {
     margin: 0;
     padding: 0;
@@ -9,7 +8,6 @@
 body {
     background-color: white;
     display: flex;
-    overflow: hidden;
 }
 
 .sidebar {
@@ -35,9 +33,31 @@ body {
 
 .sidebar h1 {
     flex: 0.4;
+    font-size: 27px;
 }
 
 .main {
     width: 80vw;
-    height: 100vh
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+#titlelink:hover span {
+    display: none;
+}
+
+#titlelink:hover:before {
+    content: "Drag to your bookmarks"
+}
+
+.sidebar nav {
+    flex: 0.4;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
