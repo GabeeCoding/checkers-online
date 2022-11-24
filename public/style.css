@@ -1,35 +1,43 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
 
-.top {
-    padding-top: 5px;
-}
-
 * {
     margin: 0;
     padding: 0;
+    font-family: "IBM Plex Mono";
 }
 
 body {
-    font-family: "Poppins";
-    font-weight: 400;
+    background-color: white;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    overflow: hidden;
 }
 
-button {
-    border-radius: 5px;
+.sidebar {
     width: 20vw;
-    height: 11vh;
-}
-
-.centeritems {
+    background-color: black;
+    height: 100vh;
     display: flex;
-    align-items: center;
+    justify-content: flex-start;
     flex-direction: column;
 }
 
-#box {
-    background-color: rgb(237, 237, 237);
+.sidebar * {
+    color: white;
+    padding-top: 6.5%;
+    font-family: "IBM Plex Mono";
+    text-align: center;
+    font-weight: 500;
+}
+.sidebar button {
+    padding: 0;
+    color: black;
+}
+
+.sidebar h1 {
+    flex: 0.4;
+}
+
+.main {
+    width: 80vw;
+    height: 100vh
 }
