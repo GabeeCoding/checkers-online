@@ -1,0 +1,12 @@
+How to do server auth without storing the key/session id in the game table?
+I think there needs to be as little tables as possible for this so that it doesnt get confusing
+There should be a DB in the app.ts file
+One for session ids with usernames
+One for games
+Usernames must be unique and not be used in the session id table already
+The start up screen has a login page
+Enter your username
+It registers a session id in the server
+Takes you to a "dashboard" page
+You can click matchmake and its cool
+wow
