@@ -1,7 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import { randomUUID } from "crypto";
-import WebSocket, { WebSocketServer } from "ws";
 
 const app = express();
 
@@ -9,26 +8,6 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 let lastGameId = 0
-
-let wss = new WebSocketServer({
-	port: 2999,
-})
-
-wss.on("connection", ws => {
-	console.log("New connection")
-	ws.on("message", (data) => {
-		console.log("Recieved data")
-		console.log(data, data.toString())
-		ws.send("ECHO")
-	})
-	ws.on("close",() => {
-		console.log("client disconnected??")
-	})
-	ws.on("error", err => {
-		console.log("An error occured")
-		console.log(err)
-	})
-})
 
 type Player = {
 	username: string,
