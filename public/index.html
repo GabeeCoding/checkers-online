@@ -1,34 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<title>Checkers Online</title>
-		<link rel="stylesheet" href="style.css" />
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="./loginstyle.css" />
+		<script src="./cookieFunctions.js"></script>
+		<title>Welcome</title>
 	</head>
 	<body>
-		<!--
-		<h1 class="top" id="title">Checkers Online</h1>
-		<div id="box" class="centeritems">
-			<h3>Insert about info</h3>
-			<p>About info text</p>
+		<div class="login">
+			<h1 style="padding: 9vh">Checkers: Online login</h1>
+			<h2>Enter a username:</h2>
+			<input type="text" name="uname" id="uname">
+			<button type="submit">Login</button>
+			<p>Status: <span id="status">none</span></p>
 		</div>
-		<input type="text" name="username" id="username" placeholder="Enter username..." />
-		<button onclick="startGame()">Play online</button>
-		<p>Status: <span id="status">Press the button to play</span></p>
-		<script src="home.js"></script>
-		-->
-		<div class="sidebar">
-			<h1><a href="#" id="titlelink"><span id="hovertitle">Checkers: Online</span></a></h1>
-			<!--<p style="flex: 0.2;">Last request status: <span id="requestStatus">none</span></p>-->
-			<!--<button onclick="connect()">Connect</button> -->
-			<nav>
-				<a href="./index.html">Home</a>
-				<a href="./game.html">Game</a>
-			</nav>
-			<p>by <a href="https://github.com/GabeeCoding" target="_blank">gabe</a></p>
-		</div>
-		<div class="main">
-			<h1 style="padding-top: 27px;">Welcome to the Checkers: Online home page</h1>
-			<p>Checkers: Online is a work in progress multiplayer checkers game</p>
-		</div>
+		<script>
+			//script
+			//lmao
+			let loginButton = document.querySelector("button")
+			let input = document.querySelector("input")
+			let status = document.querySelector("#status")
+
+			function setStatus(x) {
+				status.innerHTML = x
+			}
+
+			loginButton.onclick = () => {
+				let username = input.value
+				if(username.trim() === ""){
+					setStatus("Missing username")
+					return
+				}
+				setStatus("Setting cookie...")
+				setCookie("checkersUsername", username)
+				setStatus("Set cookie")
+				
+			}
+		</script>
 	</body>
 </html>
