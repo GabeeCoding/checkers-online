@@ -5,8 +5,6 @@ let context = canvas.getContext("2d");
 let bw = canvas.width;
 // Box height
 let bh = canvas.height;
-// Padding
-let p = 0;
 
 let n = (canvas.width / 8) - 0.1
 let centerBoxLength = n/2
@@ -14,14 +12,14 @@ let centerBoxLength = n/2
 function drawBoard() {
 	//vertical lines
 	for (let x = 0; x <= bw; x += n) {
-		context.moveTo(0.5 + x + p, p);
-		context.lineTo(0.5 + x + p, bh + p);
+		context.moveTo(0.5 + x, 0);
+		context.lineTo(0.5 + x + 0, bh);
 	}
 
 	//horizontal lines
 	for (let x = 0; x <= bh; x += n) {
-		context.moveTo(p, 0.5 + x + p);
-		context.lineTo(bw + p, 0.5 + x + p);
+		context.moveTo(0, 0.5 + x);
+		context.lineTo(bw, 0.5 + x);
 	}
 	context.strokeStyle = "black";
 	context.stroke();
