@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="./loginstyle.css" />
+		<script src="./cookieFunctions.js"></script>
+		<title>Welcome</title>
+	</head>
+	<body>
+		<div class="login">
+			<h1 style="padding: 9vh">Checkers: Online login</h1>
+			<h2>Enter a username:</h2>
+			<input type="text" name="uname" id="uname">
+			<button type="submit">Login</button>
+			<p>Status: <span id="status">none</span></p>
+		</div>
+		<script>
+			//script
+			//lmao
+			let loginButton = document.querySelector("button")
+			let input = document.querySelector("input")
+			let status = document.querySelector("#status")
+
+			function setStatus(x) {
+				status.innerHTML = x
+			}
+
+			loginButton.onclick = () => {
+				let username = input.value
+				if(username.trim() === ""){
+					setStatus("Missing username")
+					return
+				}
+				setStatus("Setting cookie...")
+				setCookie("checkersUsername", username)
+				setStatus("Set cookie")
+				
+			}
+		</script>
+	</body>
+</html>
