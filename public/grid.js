@@ -103,9 +103,7 @@ drawBoard();
 	createChecker("blue", 1, 2)
 }
 
-let canvasElem = document.querySelector("canvas");
-
-canvasElem.addEventListener("mousedown", (e) => {
+canvas.addEventListener("mousedown", (e) => {
 	let rect = canvas.getBoundingClientRect();
 	let x = e.clientX - rect.left;
 	let y = e.clientY - rect.top;
