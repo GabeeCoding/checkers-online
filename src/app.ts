@@ -137,6 +137,13 @@ function findGameFromKey(k: string): Game | undefined {
 		return false
 	});
 }
+// @ts-ignore
+app.ws("/sock", (ws: WebSocket, req) => {
+	console.log(req.cookies)
+	ws.on("open", () => {
+		ws.send("welcome to sock")
+	})
+})
 
 app.post("/matchmake", (req, resp, next) => {
 	//matchmake the user
@@ -162,8 +169,11 @@ app.post("/matchmake", (req, resp, next) => {
 		if(session.inQueue){
 			//if the other player is in queue
 			//
+			otherPlayer = session
+			console.log("Found player", session.username)
 		}
 	})
+
 })
 
 app.post("/newPlayer", (req, resp) => {
