@@ -1,9 +1,10 @@
-import express from "express";
+import express, { response } from "express";
 import cookieParser from "cookie-parser";
 import { randomUUID } from "crypto";
-
+import expressws from "express-ws";
+import WebSocket from "ws";
 const app = express();
-
+const expressWsInstance = expressws(app)
 app.use(express.static("public"));
 app.use(cookieParser());
 
@@ -11,8 +12,7 @@ let lastGameId = 0
 
 type Player = {
 	username: string,
-	key: string,
-	inGame: boolean,
+	sessionId: string,
 	inQueue: boolean,
 }
 
@@ -40,7 +40,7 @@ type Box = {
 type Board = Box[]
 
 const games: Game[] = []
-const Players: Player[] = []
+const sessions: Player[] = []
 
 function getCheckerAtCoords(game: Game, x: number, y: number): Box | undefined {
 	return game.board.find((box) => box.x === x && box.y === y)
@@ -124,9 +124,7 @@ function createGame(player1: Player, player2: Player): Game {
 		board: createBoard(),
 		turn: "red"
 	});
-	player1.inGame = true
 	player1.inQueue = false
-	player2.inGame = true
 	player2.inQueue = false
 	lastGameId += 1
 	return games[games.length - 1]
@@ -134,12 +132,71 @@ function createGame(player1: Player, player2: Player): Game {
 
 function findGameFromKey(k: string): Game | undefined {
 	return games.find((game) => {
-		if(game.blue.key === k) return true;
-		if(game.red.key === k) return true;
+		if(game.blue.sessionId === k) return true;
+		if(game.red.sessionId === k) return true;
 		return false
 	});
 }
 
+app.post("/matchmake", (req, resp, next) => {
+	//matchmake the user
+	const sessionId = req.cookies.session
+	const name = req.cookies.checkersUsername
+	if(!name){
+		resp.status(400).json({message: "Username doesn't exist?"}).end()
+		return
+	}
+	if(!sessionId){
+		resp.status(400).json({message: "Missing sessionid"}).end()
+		return
+	}
+	let thisSession = sessions.find(plr => plr.sessionId === sessionId)
+	if(!thisSession){
+		resp.status(400).json({message: "Couldn't find session"}).end()
+		return
+	}
+	thisSession.inQueue = true
+	console.log(sessions.find(s => s.sessionId === sessionId)!.inQueue)
+	let otherPlayer: Player
+	sessions.forEach((session) => {
+		if(session.inQueue){
+			//if the other player is in queue
+			//
+		}
+	})
+})
+
+app.post("/newPlayer", (req, resp) => {
+	const name = req.cookies.checkersUsername
+	console.log("/newPlayer says =>", name, name === "", name == "")
+	if(!name){
+		resp.status(400).json({message: "Username doesn't exist?"}).end()
+		return
+	}
+	if(sessions.find(session => session.username === name)){
+		resp.status(400).json({message: "Failed to register Player, username is taken"}).end();
+		return
+	}
+	let oldKey = req.cookies.session
+	if(oldKey){
+		//if the old key exists
+		//TODO: check if key DOESNT exist in session table, then continue anyway
+		if(sessions.find(session => session.sessionId === oldKey)){
+			resp.status(400).json({message: "Failed to register new Player, key already exists"}).end()
+			return
+		}
+	}
+	//generate a "session" cookie
+	let sessionid = randomUUID();
+	resp.cookie("session", sessionid);
+	sessions.push({
+		inQueue: false,
+		sessionId: sessionid,
+		username: name
+	});
+	resp.status(200).json({message: "Successfully registered player"}).end();
+})
+/*
 app.get("/newPlayer", (req, resp) => {
 	const name = Array.isArray(req.headers.username) ? req.headers.username[0] : req.headers.username
 	if(!name){
@@ -190,21 +247,9 @@ app.get("/newPlayer", (req, resp) => {
 	console.log(games)
 	resp.status(200).json({message: "Successfully created player, added to queue"}).end()
 })
+*/
 
-app.get("/getPlayer", (req, resp) => {
-	let k = req.cookies.key
-	if(!k){
-		resp.status(400).json({message: "No key"}).end()
-		return
-	}
-	let plr = Players.find(p => p.key === k)
-	if(!plr){
-		resp.status(400).json({message: "No player with key found!"}).end()
-		return
-	}
-	resp.json(plr).end();
-});
-
+/*
 app.patch("/move", (req, resp) => {
 	if(req.headers["content-type"] !== "application/json"){
 		resp.status(400).json({message: `Invalid content-type, expected application/json, got ${req.headers["content-type"]}`}).end()
@@ -274,23 +319,18 @@ app.patch("/move", (req, resp) => {
 	console.log(game.board)
 	resp.send(200).json({message: "Success"}).end();
 })
+*/
 
-app.get("/gameReady", (req, resp) => {
-	//client is ready, make 
-	let k = req.cookies.key
-	if(!k){
-		resp.status(400).json({message: "No key"}).end()
-		return
-	}
-	
-	let game = findGameFromKey(k)
-	if(!game){
-		resp.status(400).json({message: "Couldn't find game"}).end();
-		return
-	} else {
-		resp.status(200).json({game: game, ready: true, message: "Game is ready"}).end();
-	}
+/*
+// @ts-ignore
+app.ws("/1", (ws: WebSocket, req: Express.Request) => {
+	ws.on("message", (d) => {console.log(d.toString())})
+	ws.on("close", () => {
+		console.log("close")
+	})
+	console.log("connected")
 })
+*/
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
