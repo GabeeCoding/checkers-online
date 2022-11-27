@@ -3,6 +3,8 @@ import cookieParser from "cookie-parser";
 import { randomUUID } from "crypto";
 import expressws from "express-ws";
 import WebSocket from "ws";
+import * as dotenv from "dotenv"
+dotenv.config()
 const app = express();
 const expressWsInstance = expressws(app)
 app.use(express.static("public"));
