@@ -21,6 +21,8 @@
 			<h1><a href="#" id="titlelink"><span id="hovertitle">Checkers: Online</span></a></h1>
 			<!--<p style="flex: 0.2;">Last request status: <span id="requestStatus">none</span></p>-->
 			<!--<button onclick="connect()">Connect</button> -->
+			<button>Matchmake</button>
+			<p>signed in as <span class="usr">...</span></p>
 			<nav>
 				<a href="./index.html">Home</a>
 				<a href="./game.html">Game</a>
@@ -28,15 +30,20 @@
 			<p>by <a href="https://github.com/GabeeCoding" target="_blank">gabe</a></p>
 		</div>
 		<div class="main">
-			<h1 style="padding-top: 27px;">Welcome to the Checkers: Online home page</h1>
-			<p>Checkers: Online is a work in progress multiplayer checkers game</p>
+			<h1 style="padding: 30px;">Welcome <span class="usr"></span> to the Checkers: Online home page</h1>
+			<p>Checkers: Online is a work in progress multiplayer checkers game.</p>
 		</div>
 		<script>
 			//validate cookie
 			let cookie = getCookie("session")
+			let usr = getCookie("checkersUsername")
 			if(cookie === ""){
-
+				console.log("No cookie")
+				window.location = "login.html"
 			}
+			document.querySelectorAll(".usr").forEach(element => {
+				element.innerHTML = usr
+			})
 		</script>
 	</body>
 </html>
