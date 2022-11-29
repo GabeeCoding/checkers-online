@@ -45,19 +45,18 @@
 				fetch(`${origin}/newPlayer`, {
 					method: "POST"
 				}).then(resp => {
-					let err = false
 					if(!resp.ok){
-						err = true
-						setStatus("Failed to register:")
+						setStatus("Failed to register new player: ")
 					}
 					resp.json().then(json => {
-						if(err){
+						if(!resp.ok){
 							setStatus(status.innerHTML + json.message)
 						} else {
 							setStatus("Success, redirecting to home page")
+							window.location = "/"
 						}
 					}).catch(err => {
-						setStatus("Failed to parse JSON")
+						setStatus(`Request ${resp.ok ? "was ok" : "was not ok"}, failed to parse JSON`)
 					})
 				}).catch(err => {
 					setStatus("Failed to register, can't connect to server")
