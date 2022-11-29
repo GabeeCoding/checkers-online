@@ -22,6 +22,11 @@
 			let loginButton = document.querySelector("button")
 			let input = document.querySelector("input")
 			let status = document.querySelector("#status")
+			
+			let origin = window.location.origin + window.location.pathname
+			if(origin.endsWith("/")){
+				origin = origin.slice(0, -1)
+			}
 
 			function setStatus(x) {
 				status.innerHTML = x
@@ -35,8 +40,29 @@
 				}
 				setStatus("Setting cookie...")
 				setCookie("checkersUsername", username)
-				setStatus("Set cookie")
-				
+				setStatus("Set username cookie")
+				setStatus("Sending request to server...")
+				fetch(`${origin}/newPlayer`, {
+					method: "POST"
+				}).then(resp => {
+					let err = false
+					if(!resp.ok){
+						err = true
+						setStatus("Failed to register:")
+					}
+					resp.json().then(json => {
+						if(err){
+							setStatus(status.innerHTML + json.message)
+						} else {
+							setStatus("Success, redirecting to home page")
+						}
+					}).catch(err => {
+						setStatus("Failed to parse JSON")
+					})
+				}).catch(err => {
+					setStatus("Failed to register, can't connect to server")
+					console.log(err)
+				})
 			}
 		</script>
 	</body>
