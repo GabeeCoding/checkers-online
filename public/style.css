@@ -32,7 +32,7 @@ body {
 }
 
 .sidebar h1 {
-    flex: 0.4;
+    /* flex: 0.4; */ 
     font-size: 27px;
 }
 
@@ -52,9 +52,11 @@ body {
     content: "Drag to your bookmarks"
 }
 
+/*
 .sidebar nav {
     flex: 0.4;
 }
+*/
 
 nav {
     display: flex;
