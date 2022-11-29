@@ -36,6 +36,10 @@ body {
     font-size: 27px;
 }
 
+.sidebar section * {
+    width: 100%;
+}
+
 .main {
     width: 80vw;
     height: 100vh;
