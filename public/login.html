@@ -53,7 +53,7 @@
 							setStatus(status.innerHTML + json.message)
 						} else {
 							setStatus("Success, redirecting to home page")
-							window.location = "/"
+							window.location = "index.html"
 						}
 					}).catch(err => {
 						setStatus(`Request ${resp.ok ? "was ok" : "was not ok"}, failed to parse JSON`)
