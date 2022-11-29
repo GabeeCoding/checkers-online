@@ -1,12 +1,9 @@
 import express, { response } from "express";
 import cookieParser from "cookie-parser";
 import { randomUUID } from "crypto";
-import expressws from "express-ws";
-import WebSocket from "ws";
 import * as dotenv from "dotenv"
 dotenv.config()
 const app = express();
-const expressWsInstance = expressws(app)
 app.use(express.static("public"));
 app.use(cookieParser());
 
@@ -131,21 +128,6 @@ function createGame(player1: Player, player2: Player): Game {
 	lastGameId += 1
 	return games[games.length - 1]
 }
-
-function findGameFromKey(k: string): Game | undefined {
-	return games.find((game) => {
-		if(game.blue.sessionId === k) return true;
-		if(game.red.sessionId === k) return true;
-		return false
-	});
-}
-// @ts-ignore
-app.ws("/sock", (ws: WebSocket, req) => {
-	console.log(req.cookies)
-	ws.on("open", () => {
-		ws.send("welcome to sock")
-	})
-})
 
 app.post("/matchmake", (req, resp, next) => {
 	//matchmake the user
@@ -330,17 +312,6 @@ app.patch("/move", (req, resp) => {
 	boxAtPoint.checker = checkerClone
 	console.log(game.board)
 	resp.send(200).json({message: "Success"}).end();
-})
-*/
-
-/*
-// @ts-ignore
-app.ws("/1", (ws: WebSocket, req: Express.Request) => {
-	ws.on("message", (d) => {console.log(d.toString())})
-	ws.on("close", () => {
-		console.log("close")
-	})
-	console.log("connected")
 })
 */
 
