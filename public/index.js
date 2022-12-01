@@ -20,3 +20,7 @@ function getPagePath(thisPage, newPage){
     base.pop()
 	return base + newPage
 }
+
+if(!window.location.pathname.endsWith(".html")){
+    window.location = getPagePath("", "index.html")
+}
