@@ -3,8 +3,19 @@
 //mostly everything in the sidebar
 
 function signOut(){
+    /*
     removeCookie("session")
     removeCookie("checkersUsername")
     removeCookie("matchmaking")
     window.location = "login.html"
+    */
+   //send req to server!!!!!!
+}
+
+function getPagePath(thisPage, newPage){
+    let origin = window.location.origin
+    let pathname = window.location.pathname
+    let link = origin + pathname
+    let base = link.split(thisPage)
+    return base + newPage
 }
