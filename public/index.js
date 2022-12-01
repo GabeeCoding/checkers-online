@@ -22,5 +22,5 @@ function getPagePath(thisPage, newPage){
 }
 
 if(!window.location.pathname.endsWith(".html")){
-    window.location = getPagePath("", "index.html")
+    window.location = getPagePath("index.html", "index.html")
 }
