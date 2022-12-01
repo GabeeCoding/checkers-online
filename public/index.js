@@ -17,5 +17,6 @@ function getPagePath(thisPage, newPage){
     let pathname = window.location.pathname
     let link = origin + pathname
     let base = link.split(thisPage)
-    return base + newPage
+    base.pop()
+	return base + newPage
 }
