@@ -38,7 +38,7 @@ function goToPage(page){
 		let doc = spl[spl.length - 1]
 		let split = pn.split(doc)
 		split.pop()
-		return split.join("/") + page
+		url = split.join("/") + page
 	} else {
 		//it doesnt
 		if(pn.endsWith("/")){
