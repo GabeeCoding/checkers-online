@@ -46,7 +46,7 @@
 			let usr = getCookie("checkersUsername")
 			if(cookie === ""){
 				console.log("No cookie")
-				window.location = "login.html"
+				goToPage("login.html")
 			}
 			document.querySelectorAll(".usr").forEach(element => {
 				element.innerHTML = usr

@@ -129,6 +129,14 @@ function createGame(player1: Player, player2: Player): Game {
 	return games[games.length - 1]
 }
 
+app.post("/logout", (req, resp, next) => {
+	//remove cookies
+	resp.clearCookie("session")
+	resp.clearCookie("checkersUsername")
+	resp.clearCookie("matchmaking")
+	resp.status(200).json({message: "Logged out"}).end();
+})
+
 app.post("/matchmake", (req, resp, next) => {
 	//matchmake the user
 	const sessionId = req.cookies.session

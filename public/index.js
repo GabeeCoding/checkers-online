@@ -2,14 +2,26 @@
 //trying to make most features work from every page
 //mostly everything in the sidebar
 
+let path = window.location.origin
+if(path.endsWith("/")){
+	path = path.slice(0, -1)
+}
+
 function signOut(){
-    /*
-    removeCookie("session")
-    removeCookie("checkersUsername")
-    removeCookie("matchmaking")
-    window.location = "login.html"
-    */
+	/*
+	removeCookie("session")
+	removeCookie("checkersUsername")
+	removeCookie("matchmaking")
+	window.location = "login.html"
+	*/
    //send req to server!!!!!!
+   fetch(`${path}/logout`, {method: "POST"}).then(resp => {
+		if(resp.ok){
+			goToPage("login.html")
+		}
+   }).catch((err) => {
+		alert(`Failed to logout: ${err}`)
+   })
 }
 
 let og = window.location.origin
