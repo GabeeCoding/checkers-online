@@ -8,16 +8,15 @@ if(path.endsWith("/")){
 }
 
 function signOut(){
-	/*
 	removeCookie("session")
 	removeCookie("checkersUsername")
 	removeCookie("matchmaking")
-	window.location = "login.html"
-	*/
    //send req to server!!!!!!
    fetch(`${path}/logout`, {method: "POST"}).then(resp => {
 		if(resp.ok){
 			goToPage("login.html")
+		} else {
+			alert("Got response, failed to sign out")
 		}
    }).catch((err) => {
 		alert(`Failed to logout: ${err}`)
@@ -50,4 +49,31 @@ function goToPage(page){
 	}
 	window.location = url
 	//return url
+}
+
+let ls = window.localStorage
+
+function set(k, v){
+	ls.setItem(k, v)
+	return v
+}
+
+function get(k){
+	return ls.getItem(k) || null
+}
+
+function matchmake(){
+	//send req to server
+	fetch(`${path}/startMatchmaking`, {method: "POST"}).then(resp => {
+		if(resp.ok){
+			//ok
+			//matchmaking cookie set
+			
+		} else {
+			//not ok, got response, likely user error
+			
+		}
+	}).catch((err) => {
+
+	})
 }

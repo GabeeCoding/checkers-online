@@ -137,6 +137,20 @@ app.post("/logout", (req, resp, next) => {
 	resp.status(200).json({message: "Logged out"}).end();
 })
 
+app.post("/startMatchmaking", (req, resp) => {
+	//start matchmaking
+	const sessionId = req.cookies.session
+	const name = req.cookies.checkersUsername
+	if(!name){
+		resp.status(400).json({message: "Username doesn't exist?"}).end()
+		return
+	}
+	if(!sessionId){
+		resp.status(400).json({message: "Missing sessionid"}).end()
+		return
+	}
+})
+
 app.post("/matchmake", (req, resp, next) => {
 	//matchmake the user
 	const sessionId = req.cookies.session
@@ -158,14 +172,14 @@ app.post("/matchmake", (req, resp, next) => {
 	console.log(sessions.find(s => s.sessionId === sessionId)!.inQueue)
 	let otherPlayer: Player
 	sessions.forEach((session) => {
-		if(session.inQueue){
+		console.log(session === thisSession, "eq")
+		if(session.inQueue && session !== thisSession){
 			//if the other player is in queue
 			//
 			otherPlayer = session
 			console.log("Found player", session.username)
 		}
 	})
-
 })
 
 app.post("/newPlayer", (req, resp) => {
