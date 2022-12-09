@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app",
-    "dev": "npm run build && npm start"
+    "dev": "tsc && node dist/app"
   },
   "repository": {
     "type": "git",
