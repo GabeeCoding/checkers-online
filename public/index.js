@@ -62,18 +62,24 @@ function get(k){
 	return ls.getItem(k) || null
 }
 
+function setMatchmakingStatus(x){
+	let mms = document.querySelector("#mmstat")
+	mms.innerHTML = x
+}
+
 function matchmake(){
 	//send req to server
+	
 	fetch(`${path}/startMatchmaking`, {method: "POST"}).then(resp => {
 		if(resp.ok){
 			//ok
 			//matchmaking cookie set
-			
+			//check if found game
 		} else {
 			//not ok, got response, likely user error
 			
 		}
 	}).catch((err) => {
-
+		setMatchmakingStatus("Can't connect to server")
 	})
 }
