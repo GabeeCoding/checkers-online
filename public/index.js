@@ -83,7 +83,8 @@ function matchmake(){
 				//it is ok
 				//check for game
 				if(json.gameReady === true){
-					
+					let gid = json.gameId
+
 				} else {
 					//matchmaking cookie set
 					//start interval

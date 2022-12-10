@@ -16,8 +16,8 @@ type Player = {
 }
 
 type Game = {
-    blue: Player,
-	red: Player
+    blueName: string,
+	redName: string,
 	gameId: number,
 	board: Board,
 	turn: Team
@@ -117,8 +117,8 @@ function createBoard(){
 
 function createGame(player1: Player, player2: Player): Game {
 	games.push({
-		blue: player1,
-		red: player2,
+		blueName: player1.username,
+		redName: player2.username,
 		gameId: lastGameId + 1,
 		board: createBoard(),
 		turn: "red"
@@ -129,7 +129,15 @@ function createGame(player1: Player, player2: Player): Game {
 	return games[games.length - 1]
 }
 
-app.post("/logout", (req, resp, next) => {
+function getPlayerFromUsername(username: string): Player | undefined {
+	return sessions.find(session => session.username === username)
+}
+
+function getGameFromUsername(username: string): Game | undefined {
+	return games.find(game => game.blueName === username || game.redName === username)
+}
+
+app.post("/logout", (req, resp) => {
 	//remove cookies
 	resp.clearCookie("session")
 	resp.clearCookie("checkersUsername")
@@ -157,7 +165,7 @@ app.post("/startMatchmaking", (req, resp) => {
         resp.status(400).json({message: "Couldn't find session"}).end()
         return
     }
-	let otherPlayer
+	let otherPlayer: Player | null = null
 	sessions.forEach(session => {
 		if(session.inQueue && session !== thisSession){
 			//found
@@ -167,10 +175,30 @@ app.post("/startMatchmaking", (req, resp) => {
 	if(otherPlayer){
 		//if we found another player
 		//set up a game
+		//how do we set up a game so that it does not include session ids
+		//use usernames!!!!!!
+		//its so amazing
+		//hmm
+		//are usernames unique???
+		//yeah
+		//ok
+		//ok
+		//alright
+		//uhhhh
+		//i dont know
+		//nvm
+		let game = createGame(thisSession, otherPlayer)
+		resp.clearCookie("matchmaking")
+		resp.json({gameReady: true, gameId: game.gameId}).end();
+	} else {
+		resp.cookie("matchmaking", true)
+		thisSession.inQueue = true
+		//ok
+		resp.json({gameReady: false}).status(200).end();
 	}
 })
 
-app.post("/matchmake", (req, resp, next) => {
+app.post("/matchmake", (req, resp) => {
 	//matchmake the user
 	const sessionId = req.cookies.session
 	const name = req.cookies.checkersUsername
