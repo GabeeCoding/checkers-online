@@ -54,32 +54,48 @@ function goToPage(page){
 let ls = window.localStorage
 
 function set(k, v){
-	ls.setItem(k, v)
-	return v
+	let js = JSON.stringify(v)
+	ls.setItem(k, js)
+	return js
 }
 
 function get(k){
-	return ls.getItem(k) || null
+	return JSON.parse(ls.getItem(k)) || null
 }
 
-function setMatchmakingStatus(x){
+function setMatchmakingStatus(x, err){
 	let mms = document.querySelector("#mmstat")
-	mms.innerHTML = x
+	if(err) {
+		mms.innerHTML = `<span style="color: rgb(255, 49, 49); margin: 0; padding: 0;">${x}</span>`
+	} else {
+		mms.innerHTML = x
+	}
 }
 
 function matchmake(){
 	//send req to server
-	
+	setMatchmakingStatus("Waiting for server...")
 	fetch(`${path}/startMatchmaking`, {method: "POST"}).then(resp => {
 		if(resp.ok){
 			//ok
-			//matchmaking cookie set
 			//check if found game
+			resp.json(json => {
+				//it is ok
+				//check for game
+				if(json.gameReady === true){
+					
+				} else {
+					//matchmaking cookie set
+					//start interval
+				}
+			}).catch(err => {
+				setMatchmakingStatus("Failed to parse JSON", true)
+			})
 		} else {
 			//not ok, got response, likely user error
 			
 		}
 	}).catch((err) => {
-		setMatchmakingStatus("Can't connect to server")
+		setMatchmakingStatus("Can't connect to server", true)
 	})
 }
