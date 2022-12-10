@@ -44,7 +44,7 @@
 			//validate cookie
 			let cookie = getCookie("session")
 			let usr = getCookie("checkersUsername")
-			if(cookie === ""){
+			if(cookie === null){
 				console.log("No cookie")
 				goToPage("login.html")
 			}

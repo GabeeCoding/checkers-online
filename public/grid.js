@@ -1,6 +1,7 @@
 //Draws an 8x8 grid 
 let canvas = document.querySelector("canvas");
 let context = canvas.getContext("2d");
+console.log(context)
 // Box width
 let bw = canvas.width;
 // Box height
@@ -11,6 +12,8 @@ let centerBoxLength = n/2
 
 function drawBoard() {
 	//vertical lines
+	context.strokeStyle = "#000000"
+	context.fillStyle = "#000000"
 	for (let x = 0; x <= bw; x += n) {
 		context.moveTo(0.5 + x, 0);
 		context.lineTo(0.5 + x + 0, bh);
@@ -26,14 +29,14 @@ function drawBoard() {
 	paintBoard()
 }
 
-let last = "black"
 const paintBoard = () => {
+	let last = "black"
 	const paintBoxAt = (xc, yc) => {
 		if(last === "white"){
 			last = "black"
 			//last box was white
 			//paint it
-			context.fillRect((n*xc) - 1, (n*yc) -1, n, n)
+			context.fillRect((n*xc), (n*yc), n, n)
 		} else {
 			last = "white"
 		}
@@ -46,6 +49,8 @@ const paintBoard = () => {
 }
 
 const drawCircle = (x, y, radius, fill, stroke, strokeWidth) => {
+	console.log(context.fillStyle, fill)
+	console.log(context.strokeStyle, stroke)
 	context.beginPath()
 	context.arc(x, y, radius, 0, Math.PI * 2, false)
 	if (fill) {
@@ -75,12 +80,12 @@ const coords = (nx, ny) => {
 }
 
 const clear = () => {
-	context.clearRect(0,0,1000,1000)
+	context.clearRect(0,0,bw,bh)
 }
 
 const createChecker = (team, xc, yc) => {
 	let {x,y} = coords(xc,yc)
-	let diameter = n - 10
+	let diameter = n - 20
 	let fill, stroke
 	if(team === "red"){
 		fill = "rgb(255, 30, 0)"
@@ -95,11 +100,7 @@ const createChecker = (team, xc, yc) => {
 }
 
 //
-
 drawBoard();
-{
-	createChecker("blue", 1, 2)
-}
 
 canvas.addEventListener("mousedown", (e) => {
 	let rect = canvas.getBoundingClientRect();
@@ -127,4 +128,5 @@ canvas.addEventListener("mousedown", (e) => {
 			}
 		}
 	}
+	console.table(boxCoords)
 })

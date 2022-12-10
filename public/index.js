@@ -72,6 +72,13 @@ function setMatchmakingStatus(x, err){
 	}
 }
 
+function setupGame(json){
+	//json is game data
+	set("gameId", json.gameId)
+	//redirect to game page
+	goToPage("game.html")
+}
+
 let int = null
 function matchmakeInterval(){
 	if(int){
@@ -88,6 +95,7 @@ function matchmake(){
 	//send req to server
 	setMatchmakingStatus("Waiting for server...")
 	fetch(`${path}/startMatchmaking`, {method: "POST"}).then(resp => {
+		/*
 		if(resp.ok){
 			//ok
 			//check if found game
@@ -108,6 +116,24 @@ function matchmake(){
 			//not ok, got response, likely user error
 			
 		}
+		*/
+		setMatchmakingStatus("Parsing JSON...")
+		resp.json(json => {
+			if(resp.ok){
+				//if it was ok
+				if(json.gameReady === true){
+					setupGame(json)
+				} else {
+					//set interval
+					matchmakeInterval()
+				}
+			} else {
+
+			}
+		}).catch(err => {
+			console.log(err)
+			setMatchmakingStatus(`Failed to parse JSON (response: ${resp.ok ? "ok" : "not ok"})`, true)
+		})
 	}).catch((err) => {
 		console.log(err)
 		setMatchmakingStatus("Can't connect to server", true)
