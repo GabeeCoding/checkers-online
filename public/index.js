@@ -72,6 +72,18 @@ function setMatchmakingStatus(x, err){
 	}
 }
 
+let int = null
+function matchmakeInterval(){
+	if(int){
+		alert("Already matchmaking")
+		return
+	}
+	int = setInterval(() => {
+		//setinterval
+		//send req to server
+		console.log("Hi")
+	}, 5000)
+}
 function matchmake(){
 	//send req to server
 	setMatchmakingStatus("Waiting for server...")
@@ -97,6 +109,7 @@ function matchmake(){
 			
 		}
 	}).catch((err) => {
+		console.log(err)
 		setMatchmakingStatus("Can't connect to server", true)
 	})
 }
