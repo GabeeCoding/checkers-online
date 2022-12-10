@@ -149,6 +149,25 @@ app.post("/startMatchmaking", (req, resp) => {
 		resp.status(400).json({message: "Missing sessionid"}).end()
 		return
 	}
+	//set a matchmaking cookie, set the user to matchmaking, find any other users who are already
+	//if there is someone else, set up a game
+	//all links seem to be strong from testing
+	let thisSession = sessions.find(plr => plr.sessionId === sessionId)
+    if(!thisSession){
+        resp.status(400).json({message: "Couldn't find session"}).end()
+        return
+    }
+	let otherPlayer
+	sessions.forEach(session => {
+		if(session.inQueue && session !== thisSession){
+			//found
+			otherPlayer = session
+		}
+	})
+	if(otherPlayer){
+		//if we found another player
+		//set up a game
+	}
 })
 
 app.post("/matchmake", (req, resp, next) => {
