@@ -165,6 +165,14 @@ app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
         resp.status(400).json({message: "Couldn't find session"}).end()
         return
     }
+	//check if we are already in a game perhaps
+	let game = getGameFromUsername(name)
+	if(game){
+		//we are in a game
+		resp.clearCookie("matchmaking")
+		resp.json({gameReady: true, gameId: game.gameId}).end();
+		return
+	}
 	let otherPlayer: Player | null = null
 	sessions.forEach(session => {
 		if(session.inQueue && session !== thisSession){
@@ -389,3 +397,4 @@ const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
 	console.log(`Listening on port ${PORT}`)
 })
+
