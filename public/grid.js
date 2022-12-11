@@ -1,6 +1,8 @@
 //Draws an 8x8 grid 
 let canvas = document.querySelector("canvas");
 let context = canvas.getContext("2d");
+let bw,bh,n,centerBoxLength
+/*
 // Box width
 let bw = canvas.width;
 // Box height
@@ -8,9 +10,23 @@ let bh = canvas.height;
 
 let n = (canvas.width / 8) - 0.1
 let centerBoxLength = n/2
+*/
+
+function recalc(){
+	// Box width
+	bw = canvas.width;
+	// Box height
+	bh = canvas.height;
+
+	n = (bw / 8) - 0.1
+	centerBoxLength = n/2
+}
+
+recalc()
 
 function drawBoard() {
 	//vertical lines
+	recalc()
 	context.strokeStyle = "#000000"
 	context.fillStyle = "#000000"
 	context.beginPath();
