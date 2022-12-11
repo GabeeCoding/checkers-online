@@ -86,6 +86,7 @@ function matchmakeInterval(){
 		return
 	}
 	set("mmc", 0)
+	setMatchmakingStatus("Matchmaking... (0)")
 	int = setInterval(() => {
 		//setinterval
 		//send req to server
