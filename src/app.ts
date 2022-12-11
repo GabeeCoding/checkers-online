@@ -145,7 +145,7 @@ app.post("/logout", (req, resp) => {
 	resp.status(200).json({message: "Logged out"}).end();
 })
 
-app.post("/startMatchmaking", (req, resp) => {
+app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
 	//start matchmaking
 	const sessionId = req.cookies.session
 	const name = req.cookies.checkersUsername
@@ -198,6 +198,7 @@ app.post("/startMatchmaking", (req, resp) => {
 	}
 })
 
+/*
 app.post("/matchmake", (req, resp) => {
 	//matchmake the user
 	const sessionId = req.cookies.session
@@ -228,7 +229,7 @@ app.post("/matchmake", (req, resp) => {
 		}
 	})
 })
-
+*/
 app.post("/newPlayer", (req, resp) => {
 	const name = req.cookies.checkersUsername
 	console.log("/newPlayer says =>", name, name === "", name == "")

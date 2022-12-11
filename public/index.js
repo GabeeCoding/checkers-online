@@ -85,40 +85,51 @@ function matchmakeInterval(){
 		alert("Already matchmaking")
 		return
 	}
+	set("mmc", 0)
 	int = setInterval(() => {
 		//setinterval
 		//send req to server
-		console.log("Hi")
+		let mmc = get("mmc")
+		//mmc: number
+		mmc = set("mmc", mmc + 1)
+		console.log(mmc)
+		fetch(`${path}/matchmake`, {method: "POST"}).then(resp => {
+			resp.json().then(json => {
+				if(resp.ok){
+					//if it was ok
+					if(json.gameReady === true){
+						setMatchmakingStatus("Game is ready")
+						setupGame(json)
+					} else {
+						//set interval
+						//do nothing, this is interval
+						setMatchmakingStatus(`Matchmaking... (${mmc})`)
+					}
+				} else {
+					//not ok, got json
+					let msg = json.message
+					console.log(msg)	
+					setMatchmakingStatus(`Failed to matchmake: ${msg === undefined ? "No message provided" : msg}`, true)
+					clearInterval(int)
+					int = null
+				}
+			}).catch(err => {
+				console.log(err)
+				setMatchmakingStatus(`Failed to parse JSON (response: ${resp.ok ? "ok" : "not ok"})`, true)
+				clearInterval(int)
+				int = null
+			})
+		})
 	}, 5000)
 }
 function matchmake(){
 	//send req to server
+	
 	setMatchmakingStatus("Waiting for server...")
 	fetch(`${path}/startMatchmaking`, {method: "POST"}).then(resp => {
-		/*
-		if(resp.ok){
-			//ok
-			//check if found game
-			resp.json(json => {
-				//it is ok
-				//check for game
-				if(json.gameReady === true){
-					let gid = json.gameId
-					set("gameId", gid)
-				} else {
-					//matchmaking cookie set
-					//start interval
-				}
-			}).catch(err => {
-				setMatchmakingStatus("Failed to parse JSON", true)
-			})
-		} else {
-			//not ok, got response, likely user error
-			
-		}
-		*/
 		setMatchmakingStatus("Parsing JSON...")
-		resp.json(json => {
+		resp.json().then(json => {
+			setMatchmakingStatus("Successfully parsed JSON")
 			if(resp.ok){
 				//if it was ok
 				if(json.gameReady === true){
@@ -128,7 +139,10 @@ function matchmake(){
 					matchmakeInterval()
 				}
 			} else {
-
+				//not ok, got json
+				let msg = json.message
+				console.log(msg)
+				setMatchmakingStatus(`Failed to matchmake: ${msg === undefined ? "No message provided" : msg}`, true)
 			}
 		}).catch(err => {
 			console.log(err)
