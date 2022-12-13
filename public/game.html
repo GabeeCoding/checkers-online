@@ -18,8 +18,28 @@
 		</div>	
 		<div style="display: flex; justify-content: space-around; align-items: center; flex-direction: row-reverse;">
 			<canvas id="canvas" width=500 height=500></canvas>
-			<p>Some statistics here</p>
+			<div>
+				<div>
+					Game status: <span id="gamestatus">Waiting for other player...</span>
+				</div>
+				<div>
+					Your turn: <span id="yourturn">...</span>
+				</div>
+				<div>
+					Hovering over: <span id="hover">Nothing</span>
+				</div>
+				<div>
+					Opponent name: <span id="oppname">...</span>
+				</div>
+				<div>
+					Your checkers: <span id="yc">...</span>
+				</div>
+				<div>
+					Opponent's checkers: <span id="oppc">...</span>
+				</div>
+			</div>
 		</div>
 		<script src="grid.js"></script>
+		<script src="game.js"></script>
 	</body>
 </html>

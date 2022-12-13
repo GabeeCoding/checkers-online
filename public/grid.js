@@ -119,32 +119,3 @@ const createChecker = (team, xc, yc) => {
 
 //
 drawBoard();
-
-canvas.addEventListener("mousedown", (e) => {
-	let rect = canvas.getBoundingClientRect();
-	let x = e.clientX - rect.left;
-	let y = e.clientY - rect.top;
-	let boxCoords = {
-		x: null,
-		y: null
-	}
-	for (let i = 1; i < 9; i++) {
-		let startCoords = coords(i, 0).x + centerBoxLength
-		let prevCoords = coords(i - 1, 0).x + centerBoxLength
-		if(x > prevCoords){
-			if(x < startCoords){
-				boxCoords.x = i
-			}
-		}
-	}
-	for (let i = 1; i < 9; i++) {
-		let startCoords = coords(0, i).y + centerBoxLength
-		let prevCoords = coords(0, i - 1).y + centerBoxLength
-		if(y > prevCoords){
-			if(y < startCoords){
-				boxCoords.y = i
-			}
-		}
-	}
-	console.log(boxCoords.x, boxCoords.y)
-})
