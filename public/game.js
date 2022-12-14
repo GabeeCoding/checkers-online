@@ -27,6 +27,12 @@ function setStatus(e, x, err){
 //oppc: int
 
 let gameId = get("gameId")
+
+if(gameId === null){
+	alert("Game ID not found, returning to home page")
+	goToPage("index.html")
+}
+
 canvas.addEventListener("mousemove", (e) => {
 	let rect = canvas.getBoundingClientRect();
 	let x = e.clientX - rect.left;
@@ -54,8 +60,4 @@ canvas.addEventListener("mousemove", (e) => {
 		}
 	}
 	setStatus("hover", `${boxCoords.x}, ${boxCoords.y}`)
-})
-
-canvas.addEventListener("onmouseout", (e) => {
-    alert("not hovering anymore")
 })
