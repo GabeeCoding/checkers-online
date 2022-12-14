@@ -206,6 +206,36 @@ app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
 	}
 })
 
+app.get("/gamedata", (req, resp) => {
+	const sessionId = req.cookies.session
+    const name = req.cookies.checkersUsername
+    if(!name){
+        resp.status(400).json({message: "Username doesn't exist?"}).end()
+        return
+    }
+    if(!sessionId){
+        resp.status(400).json({message: "Missing sessionid"}).end()
+        return
+    }
+    //set a matchmaking cookie, set the user to matchmaking, find any other users who are already
+    //if there is someone else, set up a game
+    //all links seem to be strong from testing
+    let thisSession = sessions.find(plr => plr.sessionId === sessionId)
+    if(!thisSession){
+        resp.status(400).json({message: "Couldn't find session"}).end()
+        return
+    }
+    //check if we are already in a game perhaps
+    let game = getGameFromUsername(name)
+    if(game){
+        //we are in a game
+		//return the game thing
+		return resp.json(game).end();
+	} else {
+		
+	}
+})
+
 /*
 app.post("/matchmake", (req, resp) => {
 	//matchmake the user
