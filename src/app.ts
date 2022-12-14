@@ -16,8 +16,10 @@ type Player = {
 }
 
 type Game = {
-    blueName: string,
+	blueName: string,
 	redName: string,
+	blueConnected: boolean,
+	redConnected: boolean,
 	gameId: number,
 	board: Board,
 	turn: Team
@@ -26,8 +28,8 @@ type Game = {
 type Team = "blue" | "red"
 
 type Checker = {
-	Team: Team,
-	King: boolean
+	team: Team,
+	king: boolean
 }
 
 type Box = {
@@ -89,8 +91,8 @@ function createBoard(){
 				if(checkForBlackBox(x, y)){
 					//place blue checker
 					checker = {
-						Team: "blue",
-						King: false
+						team: "blue",
+						king: false
 					}
 				}
 			}
@@ -98,8 +100,8 @@ function createBoard(){
 				if(checkForBlackBox(x,y)){
 					//place red checker
 					checker = {
-						Team: "red",
-						King: false,
+						team: "red",
+						king: false,
 					}
 				}
 			}
@@ -121,7 +123,9 @@ function createGame(player1: Player, player2: Player): Game {
 		redName: player2.username,
 		gameId: lastGameId + 1,
 		board: createBoard(),
-		turn: "red"
+		turn: "red",
+		blueConnected: false,
+		redConnected: false,
 	});
 	player1.inQueue = false
 	player2.inQueue = false
@@ -135,6 +139,15 @@ function getPlayerFromUsername(username: string): Player | undefined {
 
 function getGameFromUsername(username: string): Game | undefined {
 	return games.find(game => game.blueName === username || game.redName === username)
+}
+
+function getTeam(Game: Game, PlayerName: string): Team {
+	if(Game.blueName === PlayerName){
+		return "blue"
+	} else if(Game.redName === PlayerName){
+		return "red"
+	}
+	throw new Error(`Can't find team of player ${PlayerName}, game id is ${Game.gameId}`)
 }
 
 app.post("/logout", (req, resp) => {
@@ -161,10 +174,10 @@ app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
 	//if there is someone else, set up a game
 	//all links seem to be strong from testing
 	let thisSession = sessions.find(plr => plr.sessionId === sessionId)
-    if(!thisSession){
-        resp.status(400).json({message: "Couldn't find session"}).end()
-        return
-    }
+	if(!thisSession){
+		resp.status(400).json({message: "Couldn't find session"}).end()
+		return
+	}
 	//check if we are already in a game perhaps
 	let game = getGameFromUsername(name)
 	if(game){
@@ -208,31 +221,38 @@ app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
 
 app.get("/gamedata", (req, resp) => {
 	const sessionId = req.cookies.session
-    const name = req.cookies.checkersUsername
-    if(!name){
-        resp.status(400).json({message: "Username doesn't exist?"}).end()
-        return
-    }
-    if(!sessionId){
-        resp.status(400).json({message: "Missing sessionid"}).end()
-        return
-    }
-    //set a matchmaking cookie, set the user to matchmaking, find any other users who are already
-    //if there is someone else, set up a game
-    //all links seem to be strong from testing
-    let thisSession = sessions.find(plr => plr.sessionId === sessionId)
-    if(!thisSession){
-        resp.status(400).json({message: "Couldn't find session"}).end()
-        return
-    }
-    //check if we are already in a game perhaps
-    let game = getGameFromUsername(name)
-    if(game){
-        //we are in a game
+	const name = req.cookies.checkersUsername
+	if(!name){
+		resp.status(400).json({message: "Username doesn't exist?"}).end()
+		return
+	}
+	if(!sessionId){
+		resp.status(400).json({message: "Missing sessionid"}).end()
+		return
+	}
+	//set a matchmaking cookie, set the user to matchmaking, find any other users who are already
+	//if there is someone else, set up a game
+	//all links seem to be strong from testing
+	let thisSession = sessions.find(plr => plr.sessionId === sessionId)
+	if(!thisSession){
+		resp.status(400).json({message: "Couldn't find session"}).end()
+		return
+	}
+	//check if we are already in a game perhaps
+	let game = getGameFromUsername(name)
+	if(game){
+		//we are in a game
 		//return the game thing
-		return resp.json(game).end();
+		//check our team
+		let t = getTeam(game, name);
+		if(t === "blue"){
+			game.blueConnected = true
+		} else if(t === "red"){
+			game.redConnected = true
+		}
+		return resp.json({game: game, team: t}).end();
 	} else {
-		
+		return resp.status(400).json({message: "Game not found"}).end();
 	}
 })
 
@@ -382,7 +402,7 @@ app.patch("/move", (req, resp) => {
 		resp.status(400).json({message: "No key"}).end()
 		return
 	}
-	
+
 	let game = findGameFromKey(k)
 	if(!game){
 		resp.status(400).json({message: "Couldn't find game"}).end();
@@ -411,7 +431,7 @@ app.patch("/move", (req, resp) => {
 		return
 	}
 	//this would be a good time to check for double moves
-	//and to remove the checker 
+	//and to remove the checker
 	//maybe bundle that with headers
 	//for now lets get the basics
 	//TODO: check for team when moving for security

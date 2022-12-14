@@ -61,3 +61,41 @@ canvas.addEventListener("mousemove", (e) => {
 	}
 	setStatus("hover", `${boxCoords.x}, ${boxCoords.y}`)
 })
+
+//get game cache interval
+
+function processGameData(json){
+	let game = json.game
+	let yourTeam = json.yourTeam
+	setStatus("team", yourTeam)
+	setStatus("yourturn", game.turn === yourTeam ? "Yes" : "No");
+	setStatus("oppname", yourTeam === "blue" ? game.redName : game.blueName);
+	setStatus("oppconn", yourTeam === "blue" ? (game.redConnected ? "Yes" : "No") : (game.blueConnected ? "Yes" : "No"));
+	let yourCheckers,oppCheckers = null;
+	game.board.forEach(box => {
+		let team = box.checker.team
+		if(team === yourTeam){
+			yourCheckers += 1
+		} else if(team !== yourTeam){
+			oppCheckers += 1
+		}
+	})
+	setStatus("oppc", oppCheckers)
+	setStatus("yc", yourCheckers)
+}
+
+function int(){
+	//every x seconds
+	//do some stuff
+	//send
+	fetch(`${path}/gamedata`).then(resp => {
+		resp.json().then(json => {
+			//json is game data
+			processGameData(json)
+		}).catch(err => {
+			setStatus("cs", "Failed to parse JSON", true)
+		})
+	}).catch(err => {
+		setStatus("cs", "Failed to get game data, can't connect to server", true)
+	})
+}
