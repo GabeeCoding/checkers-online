@@ -71,10 +71,21 @@ function processGameData(json){
 	let yourTeam = json.yourTeam
 	setStatus("team", yourTeam)
 	setStatus("yourturn", game.turn === yourTeam ? "Yes" : "No");
+	let oppConnected = false
+	if(yourTeam === "blue"){
+		oppConnected = game.redConnected
+	} else if(yourTeam === "red"){
+		oppConnected = game.blueConnected
+	}
+	if(oppConnected){
+		setStatus("gamestatus", "Opponent has connected");
+	}
 	setStatus("oppname", yourTeam === "blue" ? game.redName : game.blueName);
 	setStatus("oppconn", yourTeam === "blue" ? (game.redConnected ? "Yes" : "No") : (game.blueConnected ? "Yes" : "No"));
-	let yourCheckers,oppCheckers = null;
+	let yourCheckers = 0;
+	let oppCheckers = 0;
 	game.board.forEach(box => {
+		if(!box.checker) return;
 		let team = box.checker.team
 		if(team === yourTeam){
 			yourCheckers += 1
@@ -95,20 +106,24 @@ function interval(){
 		//debounce
 		busy = true
 		fetch(`${path}/gamedata`).then(resp => {
+			console.log(resp)
 			resp.json().then(json => {
 				//json is game data
-				setStatus("cs", "Successfully got cache")
-				processGameData(json)
-				
+				if(resp.ok){
+					setStatus("cs", "Successfully got cache")
+					processGameData(json)
+				} else {
+					setStatus("cs", `Cache request failed: ${resp.status} ${resp.statusText}<br>Message: ${json.message ? json.message : "No message provided"}`, true);
+				}
 			}).catch(err => {
 				setStatus("cs", "Failed to parse JSON", true);
 				console.log(err)
 			})
 		}).catch(err => {
 			setStatus("cs", "Failed to get game data, can't connect to server", true)
+			console.log(err)
 		}).finally(() => { busy = false });
 	}
-	
 }
 
 if(gameId){
