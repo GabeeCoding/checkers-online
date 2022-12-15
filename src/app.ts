@@ -220,6 +220,7 @@ app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
 })
 
 app.get("/gamedata", (req, resp) => {
+	console.log("works")
 	const sessionId = req.cookies.session
 	const name = req.cookies.checkersUsername
 	if(!name){

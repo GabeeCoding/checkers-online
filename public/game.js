@@ -64,7 +64,9 @@ canvas.addEventListener("mousemove", (e) => {
 
 //get game cache interval
 
+let cache = null
 function processGameData(json){
+	cache = json
 	let game = json.game
 	let yourTeam = json.yourTeam
 	setStatus("team", yourTeam)
@@ -84,18 +86,34 @@ function processGameData(json){
 	setStatus("yc", yourCheckers)
 }
 
-function int(){
+let busy = false
+function interval(){
 	//every x seconds
 	//do some stuff
 	//send
-	fetch(`${path}/gamedata`).then(resp => {
-		resp.json().then(json => {
-			//json is game data
-			processGameData(json)
+	if(!busy){
+		//debounce
+		busy = true
+		fetch(`${path}/gamedata`).then(resp => {
+			resp.json().then(json => {
+				//json is game data
+				setStatus("cs", "Successfully got cache")
+				processGameData(json)
+				
+			}).catch(err => {
+				setStatus("cs", "Failed to parse JSON", true);
+				console.log(err)
+			})
 		}).catch(err => {
-			setStatus("cs", "Failed to parse JSON", true)
-		})
-	}).catch(err => {
-		setStatus("cs", "Failed to get game data, can't connect to server", true)
-	})
+			setStatus("cs", "Failed to get game data, can't connect to server", true)
+		}).finally(() => { busy = false });
+	}
+	
+}
+
+if(gameId){
+	//if game id exists
+	//start interval
+	console.log("Started interval")
+	setInterval(interval, 1337);
 }
