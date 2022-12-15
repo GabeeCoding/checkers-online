@@ -220,7 +220,6 @@ app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
 })
 
 app.get("/gamedata", (req, resp) => {
-	console.log("works")
 	const sessionId = req.cookies.session
 	const name = req.cookies.checkersUsername
 	if(!name){
@@ -251,7 +250,7 @@ app.get("/gamedata", (req, resp) => {
 		} else if(t === "red"){
 			game.redConnected = true
 		}
-		return resp.json({game: game, team: t}).end();
+		return resp.json({game: game, yourTeam: t}).end();
 	} else {
 		return resp.status(400).json({message: "Game not found"}).end();
 	}
