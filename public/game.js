@@ -33,7 +33,7 @@ if(gameId === null){
 	goToPage("index.html")
 }
 
-canvas.addEventListener("mousemove", (e) => {
+function getCoordsFromEvent(e){
 	let rect = canvas.getBoundingClientRect();
 	let x = e.clientX - rect.left;
 	let y = e.clientY - rect.top;
@@ -59,7 +59,20 @@ canvas.addEventListener("mousemove", (e) => {
 			}
 		}
 	}
+	return boxCoords
+}
+
+canvas.addEventListener("mousemove", (e) => {
+	let boxCoords = getCoordsFromEvent(e)
 	setStatus("hover", `${boxCoords.x}, ${boxCoords.y}`)
+})
+
+canvas.addEventListener("click", (e) => {
+	let boxCoords = getCoordsFromEvent(e);
+	if(boxCoords.x && boxCoords.y){
+		console.log(boxCoords.x, boxCoords.y)
+		paintBox("cyan", boxCoords.x-1, boxCoords.y-1)
+	}
 })
 
 //get game cache interval
@@ -84,15 +97,18 @@ function processGameData(json){
 	setStatus("oppconn", yourTeam === "blue" ? (game.redConnected ? "Yes" : "No") : (game.blueConnected ? "Yes" : "No"));
 	let yourCheckers = 0;
 	let oppCheckers = 0;
-	game.board.forEach(box => {
-		if(!box.checker) return;
+	redraw()
+	for (let box of game.board) {
+		if(!box.checker) continue;
 		let team = box.checker.team
 		if(team === yourTeam){
+			createChecker(team, box.x, box.y)
 			yourCheckers += 1
 		} else if(team !== yourTeam){
+			createChecker(team, box.x, box.y)
 			oppCheckers += 1
 		}
-	})
+	}
 	setStatus("oppc", oppCheckers)
 	setStatus("yc", yourCheckers)
 }
@@ -106,7 +122,6 @@ function interval(){
 		//debounce
 		busy = true
 		fetch(`${path}/gamedata`).then(resp => {
-			console.log(resp)
 			resp.json().then(json => {
 				//json is game data
 				if(resp.ok){
