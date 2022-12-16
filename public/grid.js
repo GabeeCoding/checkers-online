@@ -47,21 +47,24 @@ function drawBoard() {
     context.fillStyle = "#000000"
 }
 
+const paintBox = (color, xc,yc) => {
+	context.fillStyle = color || "black"
+	context.fillRect((n*xc), (n*yc), n, n)
+	context.fillStyle = "black"
+}
+
 const paintBoard = () => {
 	let last = "black"
-	const paintBoxAt = (xc, yc) => {
-		if(last === "white"){
-			last = "black"
-			//last box was white
-			//paint it
-			context.fillRect((n*xc), (n*yc), n, n)
-		} else {
-			last = "white"
-		}
-	}
 	for(let y = 0; y < 9; y++){
 		for(let x = 0; x < 9; x++){
-			paintBoxAt(x, y)
+			if(last === "white"){
+				last = "black"
+				//last box was white
+				//paint it
+				paintBox("black", x, y)
+			} else {
+				last = "white"
+			}
 		}
 	}
 }
@@ -102,6 +105,7 @@ const clear = () => {
 }
 
 const createChecker = (team, xc, yc) => {
+	console.log(xc,yc)
 	let {x,y} = coords(xc,yc)
 	let diameter = n - 16
 	let fill, stroke
@@ -115,6 +119,11 @@ const createChecker = (team, xc, yc) => {
 		}
 	}
 	drawCircle(x, y, diameter/2, fill, stroke, 5)
+}
+
+function redraw(){
+	clear();
+	drawBoard()
 }
 
 //
