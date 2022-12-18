@@ -67,10 +67,21 @@ canvas.addEventListener("mousemove", (e) => {
 	setStatus("hover", `${boxCoords.x}, ${boxCoords.y}`)
 })
 
+let fromClick = null;
+let fromClickCoords = {x: 0, y: 0}
+
 canvas.addEventListener("click", (e) => {
 	let boxCoords = getCoordsFromEvent(e);
 	if(boxCoords.x && boxCoords.y){
 		paintBox("cyan", boxCoords.x-1, boxCoords.y-1)
+		//how to draw background behind a checker?
+		//clear that box
+		//fill the background
+		//fill it with a checker
+		//if it was there
+		if(cache.game.board){
+
+		}
 	}
 })
 
