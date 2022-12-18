@@ -70,7 +70,6 @@ canvas.addEventListener("mousemove", (e) => {
 canvas.addEventListener("click", (e) => {
 	let boxCoords = getCoordsFromEvent(e);
 	if(boxCoords.x && boxCoords.y){
-		console.log(boxCoords.x, boxCoords.y)
 		paintBox("cyan", boxCoords.x-1, boxCoords.y-1)
 	}
 })
@@ -78,6 +77,7 @@ canvas.addEventListener("click", (e) => {
 //get game cache interval
 
 let cache = null
+//cache.game.board is board
 function processGameData(json){
 	cache = json
 	let game = json.game
