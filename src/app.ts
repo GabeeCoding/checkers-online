@@ -222,12 +222,17 @@ app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
 app.get("/gamedata", (req, resp) => {
 	const sessionId = req.cookies.session
 	const name = req.cookies.checkersUsername
+	let gid = req.headers.gameid
 	if(!name){
 		resp.status(400).json({message: "Username doesn't exist?"}).end()
 		return
 	}
 	if(!sessionId){
 		resp.status(400).json({message: "Missing sessionid"}).end()
+		return
+	}
+	if(!gid){
+		resp.status(400).json({message: "Missing game id"}).end();
 		return
 	}
 	//set a matchmaking cookie, set the user to matchmaking, find any other users who are already
@@ -241,6 +246,10 @@ app.get("/gamedata", (req, resp) => {
 	//check if we are already in a game perhaps
 	let game = getGameFromUsername(name)
 	if(game){
+		if(game.gameId.toString() !== gid){
+			resp.status(400).json({message: "Invalid gameId! Go away hackers!!!!!!"}).end();
+			return
+		}
 		//we are in a game
 		//return the game thing
 		//check our team

@@ -132,7 +132,7 @@ function interval(){
 	if(!busy){
 		//debounce
 		busy = true
-		fetch(`${path}/gamedata`).then(resp => {
+		fetch(`${path}/gamedata`, {headers: {gameid: gameId}}).then(resp => {
 			resp.json().then(json => {
 				//json is game data
 				if(resp.ok){
