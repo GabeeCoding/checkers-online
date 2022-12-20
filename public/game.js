@@ -33,7 +33,7 @@ if(gameId === null){
 	goToPage("index.html")
 }
 
-function getCoordsFromEvent(e){
+function getCanvasCoordsFromEvent(e){
 	let rect = canvas.getBoundingClientRect();
 	let x = e.clientX - rect.left;
 	let y = e.clientY - rect.top;
@@ -63,24 +63,46 @@ function getCoordsFromEvent(e){
 }
 
 canvas.addEventListener("mousemove", (e) => {
-	let boxCoords = getCoordsFromEvent(e)
+	let boxCoords = getCanvasCoordsFromEvent(e)
 	setStatus("hover", `${boxCoords.x}, ${boxCoords.y}`)
 })
 
-let fromClick = null;
+let fromClick = false;
 let fromClickCoords = {x: 0, y: 0}
 
 canvas.addEventListener("click", (e) => {
-	let boxCoords = getCoordsFromEvent(e);
+	let boxCoords = getCanvasCoordsFromEvent(e);
 	if(boxCoords.x && boxCoords.y){
-		paintBox("cyan", boxCoords.x-1, boxCoords.y-1)
 		//how to draw background behind a checker?
 		//clear that box
 		//fill the background
 		//fill it with a checker
 		//if it was there
-		if(cache.game.board){
-
+		if(cache){
+			//if cache exists
+			//
+			let box = cache.game.board.find(box => box.x === boxCoords.x && box.y === boxCoords.y)
+			if(!box){
+				return;
+			}
+			let checker = box.checker
+			if(fromClick){
+				//this is the second click
+			} else {
+				//this is the first click
+				//if there is a checker
+				if(checker !== null){
+					//a checker exists
+					//paint it cyan
+					paintBox("cyan", boxCoords.x-1, boxCoords.y-1)
+					createChecker(checker.team, boxCoords.x, boxCoords.y)
+					//yeah
+					
+				} else {
+					//there is no checker here
+				}
+			}
+			
 		}
 	}
 })

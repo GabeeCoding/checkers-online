@@ -47,6 +47,28 @@ function drawBoard() {
     context.fillStyle = "#000000"
 }
 
+function isEven(n) {
+	return n % 2 === 0
+}
+
+function checkForBlackBox(x, y){
+	let xEven = isEven(x);
+	let yEven = isEven(y)
+	if(xEven) {
+		if(yEven){
+			return false
+		} else {
+			return true
+		}
+	} else {
+		if(yEven) {
+			return true
+		} else {
+			return false
+		}
+	}
+}
+
 const paintBox = (color, xc,yc) => {
 	context.fillStyle = color || "black"
 	context.fillRect((n*xc), (n*yc), n, n)
@@ -54,6 +76,7 @@ const paintBox = (color, xc,yc) => {
 }
 
 const paintBoard = () => {
+	/*
 	let last = "black"
 	for(let y = 0; y < 9; y++){
 		for(let x = 0; x < 9; x++){
@@ -64,6 +87,14 @@ const paintBoard = () => {
 				paintBox("black", x, y)
 			} else {
 				last = "white"
+			}
+		}
+	}
+	*/
+	for(let y = 0; y < 9; y++){
+		for(let x = 0; x < 9; x++){
+			if(checkForBlackBox(x,y)){
+				paintBox("black", x, y)
 			}
 		}
 	}
