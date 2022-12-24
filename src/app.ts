@@ -152,6 +152,7 @@ function getTeam(Game: Game, PlayerName: string): Team {
 
 app.post("/logout", (req, resp) => {
 	//remove cookies
+	//TODO:REMOVE old player
 	resp.clearCookie("session")
 	resp.clearCookie("checkersUsername")
 	resp.clearCookie("matchmaking")
@@ -261,7 +262,79 @@ app.get("/gamedata", (req, resp) => {
 		}
 		return resp.json({game: game, yourTeam: t}).end();
 	} else {
-		return resp.status(400).json({message: "Game not found"}).end();
+		return resp.status(404).json({message: "Game not found"}).end();
+	}
+})
+
+function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box){
+	//calculate the possible moves
+	let board = game.board
+	//sooooo red team is at the bottom
+	//blue team is at the top
+	//have the from checker coords
+	let isBlue = PlayerUsername === game.blueName
+	if(isBlue){
+		//we are blue
+		//descend
+		//current y:
+		let y = fromBox.y
+		//lets say 1
+		//so keep adding the y
+		//actually....
+		
+	} else {
+
+	}
+}
+
+app.post("/move", (req, resp) => {
+	const sessionId = req.cookies.session
+	const name = req.cookies.checkersUsername
+	let gid = req.headers.gameid
+	let fromx = req.headers.cfromx && parseInt((Array.isArray(req.headers.cfromx) ? req.headers.cfromx[0] : req.headers.cfromx))
+	let fromy = req.headers.cfromy && parseInt((Array.isArray(req.headers.cfromy) ? req.headers.cfromy[0] : req.headers.cfromy))
+	let tox = req.headers.ctox && parseInt((Array.isArray(req.headers.ctox) ? req.headers.ctox[0] : req.headers.ctox));
+	let toy = req.headers.ctoy && parseInt((Array.isArray(req.headers.ctoy) ? req.headers.ctoy[0] : req.headers.ctoy))
+	if(!name){
+		resp.status(400).json({message: "Username doesn't exist?"}).end()
+		return
+	}
+	if(!sessionId){
+		resp.status(400).json({message: "Missing sessionid"}).end()
+		return
+	}
+	if(!gid){
+		resp.status(400).json({message: "Missing game id"}).end();
+		return
+	}
+	if(!fromx || !fromy || !tox || !toy){
+		resp.status(400).json({message: "Failed to parse checker positions"}).end();
+		return;
+	}
+	//set a matchmaking cookie, set the user to matchmaking, find any other users who are already
+	//if there is someone else, set up a game
+	//all links seem to be strong from testing
+	let thisSession = sessions.find(plr => plr.sessionId === sessionId)
+	if(!thisSession){
+		resp.status(400).json({message: "Couldn't find session"}).end()
+		return
+	}
+	let game = getGameFromUsername(name)
+	if(game){
+		if(game.gameId.toString() !== gid){
+			resp.status(400).json({message: "Invalid gameId! Go away hackers!!!!!!"}).end();
+			return
+		}
+		//we are in a game
+		//move checker
+		let t = getTeam(game, name);
+		//do validation
+		//
+		let fromChecker = getCheckerAtCoords(game, fromx, fromy)
+		let toChecker = getCheckerAtCoords(game, tox, toy);
+		
+	} else {
+		return resp.status(404).json({message: "Game not found"}).end();
 	}
 })
 

@@ -71,8 +71,9 @@ let fromClick = false;
 let fromClickCoords = {x: 0, y: 0}
 
 canvas.addEventListener("click", (e) => {
-	let boxCoords = getCanvasCoordsFromEvent(e);
-	if(boxCoords.x && boxCoords.y){
+	let {x,y} = getCanvasCoordsFromEvent(e);
+	let yourTurn = game ? game.turn === "blue" : false
+	if(x && y){
 		//how to draw background behind a checker?
 		//clear that box
 		//fill the background
@@ -81,25 +82,53 @@ canvas.addEventListener("click", (e) => {
 		if(cache){
 			//if cache exists
 			//
-			let box = cache.game.board.find(box => box.x === boxCoords.x && box.y === boxCoords.y)
+			if(!yourTurn){
+				//its not your turn
+				return;
+			}
+			let box = cache.game.board.find(box => box.x === x && box.y === y)
 			if(!box){
 				return;
 			}
 			let checker = box.checker
 			if(fromClick){
 				//this is the second click
+				if(checker){
+					//there is a checker there
+					//impossible move
+					//fromClick = false;
+					//fromClickCoords = {x: 0, y: 0}
+					//reset click?
+					return;
+				} else {
+					//no checker there
+					//go
+					
+				}
 			} else {
 				//this is the first click
 				//if there is a checker
 				if(checker !== null){
 					//a checker exists
 					//paint it cyan
-					paintBox("cyan", boxCoords.x-1, boxCoords.y-1)
-					createChecker(checker.team, boxCoords.x, boxCoords.y)
+					//paintBox("cyan", boxCoords.x-1, boxCoords.y-1)
+					//createChecker(checker.team, boxCoords.x, boxCoords.y)
 					//yeah
-					
+					//that works
+					//how do I prevent redrawing on selection?
+					//server asks to redraw
+					//or
+					//only redraw if its not your turn
+					//lets not focus on drawing yet
+					fromClick = true;
+					fromClickCoords = {
+						x: x,
+						y: y
+					}
+					console.log("Set fromClick")
 				} else {
 					//there is no checker here
+					return;
 				}
 			}
 			
@@ -115,8 +144,9 @@ function processGameData(json){
 	cache = json
 	let game = json.game
 	let yourTeam = json.yourTeam
+	let yourTurn = game.turn === yourTeam
 	setStatus("team", yourTeam)
-	setStatus("yourturn", game.turn === yourTeam ? "Yes" : "No");
+	setStatus("yourturn", yourTurn ? "Yes" : "No");
 	let oppConnected = false
 	if(yourTeam === "blue"){
 		oppConnected = game.redConnected
