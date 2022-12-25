@@ -273,19 +273,46 @@ function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box
 	//blue team is at the top
 	//have the from checker coords
 	let isBlue = PlayerUsername === game.blueName
+	//current y:
+	let currentY = fromBox.y
+	//lets say 1
+	//so keep adding the y
+	//actually....
+	/*
+	console.log("iterating")
+	let calcMoves = (y: number) => {
+		//got the from thingyssss
+		//ok this is how we check the moves
+		//y is the line we are 
+	}
 	if(isBlue){
 		//we are blue
-		//descend
-		//current y:
-		let y = fromBox.y
-		//lets say 1
-		//so keep adding the y
-		//actually....
-		
+		//ascend
+		//y: 1-3
+		for(let y = currentY + 1; y <= 8; y++){
+			console.log(y, "Blue")
+		}
 	} else {
-
+		console.log("red")
+		//we are red
+		//at the bottom
+		//y: 5-8
+		//increment y down
+		console.log(currentY)
+		for(let y = currentY - 1; y >= 1; y--){
+			console.log(y, "Red")
+		}
 	}
+	*/
+	//get the checker x and y
+	fromBox.x, fromBox.y
+	let incDir = (n: number, i: number): number => {
+		return isBlue ? n + i : n - i
+	}
+	//fromy needs to change by 1
+	let ny = incDir(fromBox.y, 1)
 }
+calculatePossibleMoves(createGame({inQueue: false, sessionId: "123", username: "red"}, {inQueue: false, sessionId: "123", username: "blue"}), "blue", {checker: {team: "blue", king: false}, x: 2, y: 3})
 
 app.post("/move", (req, resp) => {
 	const sessionId = req.cookies.session
