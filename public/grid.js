@@ -136,7 +136,6 @@ const clear = () => {
 }
 
 const createChecker = (team, xc, yc) => {
-	console.log(xc,yc)
 	let {x,y} = coords(xc,yc)
 	let diameter = n - 16
 	let fill, stroke

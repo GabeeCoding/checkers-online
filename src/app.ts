@@ -1,4 +1,4 @@
-import express, { response } from "express";
+import express, { Response, response } from "express";
 import cookieParser from "cookie-parser";
 import { randomUUID } from "crypto";
 import * as dotenv from "dotenv"
@@ -43,7 +43,7 @@ type Board = Box[]
 const games: Game[] = []
 const sessions: Player[] = []
 
-function getCheckerAtCoords(game: Game, x: number, y: number): Box | undefined {
+function getBoxFromCoords(game: Game, x: number, y: number): Box | undefined {
 	return game.board.find((box) => box.x === x && box.y === y)
 }
 
@@ -221,6 +221,8 @@ app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
 })
 
 app.get("/gamedata", (req, resp) => {
+	//@ts-expect-error
+	console.log(resp.fail())
 	const sessionId = req.cookies.session
 	const name = req.cookies.checkersUsername
 	let gid = req.headers.gameid
@@ -280,10 +282,29 @@ function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box
 	//actually....
 	/*
 	console.log("iterating")
+	
+	*/
+	/*
+	//get the checker x and y
+	fromBox.x, fromBox.y
+	let incDir = (n: number, i: number): number => {
+		return isBlue ? n + i : n - i
+	}
+	//fromy needs to change by 1
+	let ny = incDir(fromBox.y, 1);
+	//new y
+	//new x?
+	//there can be multiple x choices
+	//two to be exact
+	//huh maybe the loops were required
+	*/
 	let calcMoves = (y: number) => {
 		//got the from thingyssss
 		//ok this is how we check the moves
-		//y is the line we are 
+		//y is the line we are going to
+		//y is newY
+		let newXLeft = fromBox.x - 1
+		
 	}
 	if(isBlue){
 		//we are blue
@@ -303,14 +324,6 @@ function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box
 			console.log(y, "Red")
 		}
 	}
-	*/
-	//get the checker x and y
-	fromBox.x, fromBox.y
-	let incDir = (n: number, i: number): number => {
-		return isBlue ? n + i : n - i
-	}
-	//fromy needs to change by 1
-	let ny = incDir(fromBox.y, 1)
 }
 calculatePossibleMoves(createGame({inQueue: false, sessionId: "123", username: "red"}, {inQueue: false, sessionId: "123", username: "blue"}), "blue", {checker: {team: "blue", king: false}, x: 2, y: 3})
 
@@ -355,11 +368,36 @@ app.post("/move", (req, resp) => {
 		//we are in a game
 		//move checker
 		let t = getTeam(game, name);
+		if(game.turn !== t){
+			return resp.status(400).json({message: "It is not your turn yet"}).end();
+		}
 		//do validation
 		//
-		let fromChecker = getCheckerAtCoords(game, fromx, fromy)
-		let toChecker = getCheckerAtCoords(game, tox, toy);
-		
+		let fromChecker = getBoxFromCoords(game, fromx, fromy)
+		let toChecker = getBoxFromCoords(game, tox, toy);
+		if(!fromChecker){
+			return resp.status(400).json({message: "From box doesn't exist"}).end();
+		}
+		if(!fromChecker.checker){
+			return resp.status(400).json({message: `Missing checker at ${fromx}, ${fromy}`}).end();
+		}
+		if(fromChecker.checker.team !== t){
+			return resp.status(400).json({message: "This checker doesn't belong to you"}).end();
+		}
+		//move it
+		let wasKing = fromChecker.checker.king
+		fromChecker.checker = null
+		console.log(wasKing)
+		if(!toChecker){
+			return resp.status(400).json({message: "To box doesn't exist"}).end();
+		}
+		toChecker.checker = {
+			king: (toChecker.y === 8 || toChecker.y === 1) ? true : false,
+			team: t,
+		}
+		//flip the turn
+		game.turn = game.turn === "blue" ? "red" : "blue"
+		return resp.status(200).json({message: "Successfully moved checker"}).end();
 	} else {
 		return resp.status(404).json({message: "Game not found"}).end();
 	}

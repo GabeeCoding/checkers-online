@@ -72,7 +72,8 @@ let fromClickCoords = {x: 0, y: 0}
 
 canvas.addEventListener("click", (e) => {
 	let {x,y} = getCanvasCoordsFromEvent(e);
-	let yourTurn = game ? game.turn === "blue" : false
+	let yourTurn = cache.game.turn === cache.yourTeam
+	console.log(x,y,yourTurn)
 	if(x && y){
 		//how to draw background behind a checker?
 		//clear that box
@@ -96,15 +97,40 @@ canvas.addEventListener("click", (e) => {
 				if(checker){
 					//there is a checker there
 					//impossible move
-					//fromClick = false;
-					//fromClickCoords = {x: 0, y: 0}
-					//reset click?
 					return;
 				} else {
 					//no checker there
 					//go
-					
+					//move it
+					fetch(`${path}/move`, {method: "POST", headers: {
+						cfromx: fromClickCoords.x,
+						cfromy: fromClickCoords.y,
+						ctox: x,
+						ctoy: y,
+						gameid: gameId,
+					}}).then(resp => {
+						if(resp.ok){
+							//its ok
+							//its not your turn now
+							console.log("Ok, moved")
+						} else {
+							resp.json().then(json => {
+								if(json && json.message){
+									alert("Failed to move: " + json.message)
+								} else {
+									alert("Failed to move, no message provided")
+								}
+							}).catch(err => {
+								console.log(err)
+								alert("Failed to move, failed to parse JSON")
+							})
+						}
+					}).catch(err => {
+						console.log(err)
+					})
 				}
+				fromClick = false;
+				fromClickCoords = {x: 0, y: 0}
 			} else {
 				//this is the first click
 				//if there is a checker
@@ -208,5 +234,5 @@ if(gameId){
 	//if game id exists
 	//start interval
 	console.log("Started interval")
-	setInterval(interval, 1337);
+	setInterval(interval, 100);
 }
