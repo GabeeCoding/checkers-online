@@ -351,6 +351,9 @@ app.post("/move", (req, resp) => {
 		resp.status(400).json({message: "Failed to parse checker positions"}).end();
 		return;
 	}
+	if([fromx, fromy, tox, toy].some(coord => coord > 8 || coord < 1)){
+		return resp.status(400).json({message: "Invalid range of coords"}).end();
+	}
 	//set a matchmaking cookie, set the user to matchmaking, find any other users who are already
 	//if there is someone else, set up a game
 	//all links seem to be strong from testing
