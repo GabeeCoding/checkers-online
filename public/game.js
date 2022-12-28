@@ -234,5 +234,5 @@ if(gameId){
 	//if game id exists
 	//start interval
 	console.log("Started interval")
-	setInterval(interval, 100);
+	setInterval(interval, 1000);
 }
