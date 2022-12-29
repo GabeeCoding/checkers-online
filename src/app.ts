@@ -221,8 +221,6 @@ app.post(["/startMatchmaking", "/matchmake"], (req, resp) => {
 })
 
 app.get("/gamedata", (req, resp) => {
-	//@ts-expect-error
-	console.log(resp.fail())
 	const sessionId = req.cookies.session
 	const name = req.cookies.checkersUsername
 	let gid = req.headers.gameid
