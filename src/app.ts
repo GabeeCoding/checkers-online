@@ -266,7 +266,16 @@ app.get("/gamedata", (req, resp) => {
 	}
 })
 
-function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box){
+type Move = {
+	x: number,
+	y: number,
+	jump: boolean,
+	jumpedOverBox?: Box
+}
+
+type Moves = Move[]
+
+function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box): Moves {
 	//calculate the possible moves
 	//sooooo red team is at the bottom
 	//blue team is at the top
@@ -295,7 +304,7 @@ function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box
 	//two to be exact
 	//huh maybe the loops were required
 	*/
-	let validMoves: {x: number, y: number, jump: boolean}[] = []
+	let validMoves: Moves = []
 	const inc = (n: number, incrementBy: number, subtract?: boolean) => {
 		//This function increases a number depending on the team so we do not have to repeat our code
 		if(isBlue){
@@ -349,100 +358,107 @@ function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box
 			return;
 		}
 		if(!outOfBounds(newXLeft)){
-			console.log("newXLeft is not out of bounds")
-			let boxL = getBoxFromCoords(game, newXLeft, newY)!
-			if(boxL.checker && boxL.checker.team !== thisPlayersTeam){
-				console.log("BoxL has a checker and it is not on our team. It is at", newXLeft, newY)
-				//if boxL has a checker
-				//make more x and y variables
-				//let jumptoY = newY + 1
-				let jumptoY = inc(newY, 1)
-				let jumptoX = newXLeft - 1
-				console.log("To make the jump the coords after the jump are ", jumptoX, jumptoY)
-				if(outOfBounds(jumptoX) || outOfBounds(jumptoY)){
-					//if x or y is out of bounds we cant make the jump
-					console.log("JumptoX or jumptoY are out of bounds, cant jump there", jumptoX, jumptoY)
-					return
-				}
-				let boxAtJumpPoint = getBoxFromCoords(game, jumptoX, jumptoY)!
-				if(!boxAtJumpPoint.checker){
-					console.log("The box at the jump point", jumptoX, jumptoY, "does not have a checker there")
-					//if there is no checker there
-					//we can make the jump
+			//needs special function scope because if it returns for X it wont check for Y moves
+			(function(){
+				console.log("newXLeft is not out of bounds")
+				let boxL = getBoxFromCoords(game, newXLeft, newY)!
+				if(boxL.checker && boxL.checker.team !== thisPlayersTeam){
+					console.log("BoxL has a checker and it is not on our team. It is at", newXLeft, newY)
+					//if boxL has a checker
+					//make more x and y variables
+					//let jumptoY = newY + 1
+					let jumptoY = inc(newY, 1)
+					let jumptoX = newXLeft - 1
+					console.log("To make the jump the coords after the jump are ", jumptoX, jumptoY)
+					if(outOfBounds(jumptoX) || outOfBounds(jumptoY)){
+						//if x or y is out of bounds we cant make the jump
+						console.log("JumptoX or jumptoY are out of bounds, cant jump there", jumptoX, jumptoY)
+						return
+					}
+					let boxAtJumpPoint = getBoxFromCoords(game, jumptoX, jumptoY)!
+					if(!boxAtJumpPoint.checker){
+						console.log("The box at the jump point", jumptoX, jumptoY, "does not have a checker there")
+						//if there is no checker there
+						//we can make the jump
+						validMoves.push({
+							jump: true,
+							jumpedOverBox: boxL,
+							x: jumptoX,
+							y: jumptoY
+						})
+						console.log("Added", jumptoX, jumptoY, "to valid moves")
+						console.log("Recursing...")
+						rec(jumptoX, jumptoY)
+					}
+				} else if(!boxL.checker) {
+					console.log("BoxL does not have a checker")
+					//boxL does not have a checker
+					//newXLeft is not out of bounds
+					//newY is not out of bounds
+					//go
 					validMoves.push({
-						jump: true,
-						x: jumptoX,
-						y: jumptoY
+						jump: false,
+						x: newXLeft,
+						y: newY
 					})
-					console.log("Added", jumptoX, jumptoY, "to valid moves")
-					console.log("Recursing...")
-					rec(jumptoX, jumptoY)
+					console.log("Added", newXLeft, newY, "to valid moves")
+					console.log("Not recursing")
+					//rec(newXLeft, newY)
+					//return
 				}
-			} else if(!boxL.checker) {
-				console.log("BoxL does not have a checker")
-				//boxL does not have a checker
-				//newXLeft is not out of bounds
-				//newY is not out of bounds
-				//go
-				validMoves.push({
-					jump: false,
-					x: newXLeft,
-					y: newY
-				})
-				console.log("Added", newXLeft, newY, "to valid moves")
-				console.log("Not recursing")
-				//rec(newXLeft, newY)
-				//return
-			}
+			})()
 		}
 		///clone it
 		//i know dont repeat yourself principle exists but i dont know how my code works anyway
 		if(!outOfBounds(newXRight)){
-			console.log("newXRight", newXRight, "is not out of bounds")
-			let boxR = getBoxFromCoords(game, newXRight, newY)!
-			console.log("BoxR coords are", newXRight, newY)
-			if(boxR.checker && boxR.checker.team !== thisPlayersTeam){
-				console.log("BoxR has a checker and it is not on our team")
-				//if boxR has a checker
-				//make more x and y variables
-				let jumptoY = inc(newY, 1)
-				let jumptoX = newXRight + 1
-				if(outOfBounds(jumptoX) || outOfBounds(jumptoY)){
-					console.log("JumpToX or jumpToY is out of bounds", jumptoX, jumptoY)
-					//if x or y is out of bounds we cant make the jump
-					return
-				}
-				console.log("JumptoX and JumptoY are valid", jumptoX, jumptoY)
-				let boxAtJumpPoint = getBoxFromCoords(game, jumptoX, jumptoY)!
-				if(!boxAtJumpPoint.checker){
-					console.log("There is no checker at jumptoX and jumptoY", boxAtJumpPoint)
-					//if there is no checker there
-					//we can make the jump
+			(function(){
+				console.log("newXRight", newXRight, "is not out of bounds")
+				let boxR = getBoxFromCoords(game, newXRight, newY)!
+				console.log("BoxR coords are", newXRight, newY)
+				if(boxR.checker && boxR.checker.team !== thisPlayersTeam){
+					console.log("BoxR has a checker and it is not on our team")
+					//if boxR has a checker
+					//make more x and y variables
+					let jumptoY = inc(newY, 1)
+					let jumptoX = newXRight + 1
+					if(outOfBounds(jumptoX) || outOfBounds(jumptoY)){
+						console.log("JumpToX or jumpToY is out of bounds", jumptoX, jumptoY)
+						//if x or y is out of bounds we cant make the jump
+						return
+					}
+					console.log("JumptoX and JumptoY are valid", jumptoX, jumptoY)
+					let boxAtJumpPoint = getBoxFromCoords(game, jumptoX, jumptoY)!
+					if(!boxAtJumpPoint.checker){
+						console.log("There is no checker at jumptoX and jumptoY", boxAtJumpPoint)
+						//if there is no checker there
+						//we can make the jump
+						validMoves.push({
+							jump: true,
+							jumpedOverBox: boxR,
+							x: jumptoX,
+							y: jumptoY
+						})
+						console.log("Added to valid moves table", jumptoX, jumptoY)
+						console.log("Recursing...")
+						rec(jumptoX, jumptoY)
+					}
+				} else if(!boxR.checker) {
+					console.log("BoxR does not have a checker")
+					//boxL does not have a checker
+					//newXRight is not out of bounds
+					//newY is not out of bounds
+					//go
 					validMoves.push({
-						jump: true,
-						x: jumptoX,
-						y: jumptoY
+						jump: false,
+						x: newXRight,
+						y: newY
 					})
-					console.log("Added to valid moves table", jumptoX, jumptoY)
-					console.log("Recursing...")
-					rec(jumptoX, jumptoY)
+					console.log("Add to valid moves", newXRight, newY)
+					console.log("Not recursing")
+					//rec(newXRight, newY)
+					//return
 				}
-			} else if(!boxR.checker) {
-				console.log("BoxR does not have a checker")
-				//boxL does not have a checker
-				//newXRight is not out of bounds
-				//newY is not out of bounds
-				//go
-				validMoves.push({
-					jump: false,
-					x: newXRight,
-					y: newY
-				})
-				console.log("Add to valid moves", newXRight, newY)
-				console.log("Not recursing")
-				//rec(newXRight, newY)
-				//return
-			}
+			})()
 		}
 	}
 	rec(fromBox.x, fromBox.y)
@@ -538,6 +554,23 @@ app.post("/move", (req, resp) => {
 		if(fromChecker.checker.team !== t){
 			return resp.status(400).json({message: "This checker doesn't belong to you"}).end();
 		}
+
+		let moves = calculatePossibleMoves(game, name, fromChecker)
+		let hasToJump = moves.some(move => move.jump === true)
+		let move = moves.find(move => move.x === tox && move.y === toy)
+		if(!move){
+			return resp.status(400).json({message: "Bad move"}).end()
+		}
+
+		//move is valid
+		if(hasToJump && move.jump === false){
+			return resp.status(400).json({message: "You are forced to jump"}).end();
+		}
+
+		if(move.jump){
+			move.jumpedOverBox!.checker = null
+		}
+
 		//move it
 		let wasKing = fromChecker.checker.king
 		fromChecker.checker = null
