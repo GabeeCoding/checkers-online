@@ -268,7 +268,6 @@ app.get("/gamedata", (req, resp) => {
 
 function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box){
 	//calculate the possible moves
-	let board = game.board
 	//sooooo red team is at the bottom
 	//blue team is at the top
 	//have the from checker coords
@@ -451,6 +450,7 @@ function calculatePossibleMoves(game: Game, PlayerUsername: string, fromBox: Box
 	return validMoves
 }
 
+/*
 let game = createGame({
 	inQueue: false,
 	sessionId: "wasd",
@@ -469,17 +469,21 @@ getBoxFromCoords(game, 2,5)!.checker = {
 getBoxFromCoords(game, 3,2)!.checker = null
 
 calculatePossibleMoves(game, "red", getBoxFromCoords(game, 3, 6)!)
-
-//calculatePossibleMoves(createGame({inQueue: false, sessionId: "123", username: "red"}, {inQueue: false, sessionId: "123", username: "blue"}), "blue", {checker: {team: "blue", king: false}, x: 2, y: 3})
+*/
 
 app.post("/move", (req, resp) => {
 	const sessionId = req.cookies.session
 	const name = req.cookies.checkersUsername
 	let gid = req.headers.gameid
-	let fromx = req.headers.cfromx && parseInt((Array.isArray(req.headers.cfromx) ? req.headers.cfromx[0] : req.headers.cfromx))
-	let fromy = req.headers.cfromy && parseInt((Array.isArray(req.headers.cfromy) ? req.headers.cfromy[0] : req.headers.cfromy))
-	let tox = req.headers.ctox && parseInt((Array.isArray(req.headers.ctox) ? req.headers.ctox[0] : req.headers.ctox));
-	let toy = req.headers.ctoy && parseInt((Array.isArray(req.headers.ctoy) ? req.headers.ctoy[0] : req.headers.ctoy))
+	//@ts-expect-error
+	let fromx: number = req.headers.cfromx && parseInt((Array.isArray(req.headers.cfromx) ? req.headers.cfromx[0] : req.headers.cfromx))
+	//@ts-expect-error
+	let fromy: number = req.headers.cfromy && parseInt((Array.isArray(req.headers.cfromy) ? req.headers.cfromy[0] : req.headers.cfromy))
+	//@ts-expect-error
+	let tox: number = req.headers.ctox && parseInt((Array.isArray(req.headers.ctox) ? req.headers.ctox[0] : req.headers.ctox));
+	//@ts-expect-error
+	let toy: number = req.headers.ctoy && parseInt((Array.isArray(req.headers.ctoy) ? req.headers.ctoy[0] : req.headers.ctoy))
+	//it is ok to expect errors because we check the parsing success later on
 	if(!name){
 		resp.status(400).json({message: "Username doesn't exist?"}).end()
 		return
@@ -492,11 +496,13 @@ app.post("/move", (req, resp) => {
 		resp.status(400).json({message: "Missing game id"}).end();
 		return
 	}
-	if(!fromx || !fromy || !tox || !toy){
-		resp.status(400).json({message: "Failed to parse checker positions"}).end();
+	//trying to get the compiler to shut up
+	//@ts-ignore
+	if([fromx, fromy, tox, toy].some(n => isNaN(n as number) || n === "" || n === undefined)){
+		resp.status(400).json({message: "Failed to parse checker position(s)"}).end();
 		return;
 	}
-	if([fromx, fromy, tox, toy].some(coord => coord > 8 || coord < 1)){
+	if([fromx, fromy, tox, toy].some(coord => coord! > 8 || coord! < 1)){
 		return resp.status(400).json({message: "Invalid range of coords"}).end();
 	}
 	//set a matchmaking cookie, set the user to matchmaking, find any other users who are already
