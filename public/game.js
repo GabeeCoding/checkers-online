@@ -97,7 +97,7 @@ canvas.addEventListener("click", (e) => {
 				if(checker){
 					//there is a checker there
 					//impossible move
-					return;
+					//return;
 				} else {
 					//no checker there
 					//go
@@ -112,21 +112,22 @@ canvas.addEventListener("click", (e) => {
 						if(resp.ok){
 							//its ok
 							//its not your turn now
-							console.log("Ok, moved")
+							setStatus("movestatus", "Successfully moved piece")
 						} else {
 							resp.json().then(json => {
 								if(json && json.message){
-									alert("Failed to move: " + json.message)
+									setStatus("movestatus", "Failed to move: " + json.message, true)
 								} else {
-									alert("Failed to move, no message provided")
+									setStatus("movestatus", "Failed to move: No message provided", true)
 								}
 							}).catch(err => {
 								console.log(err)
-								alert("Failed to move, failed to parse JSON")
+								setStatus("movestatus", "Failed to move: Failed to parse JSON", true)
 							})
 						}
 					}).catch(err => {
 						console.log(err)
+						setStatus("movestatus", "Failed to reach server", true)
 					})
 				}
 				fromClick = false;
